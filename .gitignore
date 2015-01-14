@@ -39,3 +39,5 @@ Vision/Vision/Vision/Debug/Vision.vcxprojResolveAssemblyReference.cache
 *.ipch
 *.metagen
 >>>>>>> origin/master
+/Clients/NeuralNetwork/nbproject/private/
+/Clients/NeuralNetwork/build/
