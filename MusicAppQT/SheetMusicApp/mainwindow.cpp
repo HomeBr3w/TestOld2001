@@ -11,7 +11,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-    delete ui, camera;
+    delete ui;
+    delete camera;
 }
 
 void MainWindow::cameraInit()

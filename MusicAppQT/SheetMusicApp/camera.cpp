@@ -10,7 +10,9 @@ Camera::Camera(QWidget* widget)
 
 Camera::~Camera()
 {
-    delete camera, cameraViewFinder, cameraWidget;
+    delete camera;
+    delete cameraViewFinder;
+    delete cameraWidget;
 }
 
 void Camera::initCamera()
