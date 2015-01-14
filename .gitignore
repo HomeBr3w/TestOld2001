@@ -29,3 +29,6 @@
 /Clients/NoteFinder-PC/nbproject/private/
 /Clients/NoteFinder-PC/dist/
 /Clients/NoteFinder-PC/build/
+*.tlog
+*.ipch
+*.metagen
