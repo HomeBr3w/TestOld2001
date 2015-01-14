@@ -29,7 +29,13 @@
 /Clients/NoteFinder-PC/nbproject/private/
 /Clients/NoteFinder-PC/dist/
 /Clients/NoteFinder-PC/build/
+<<<<<<< HEAD
 Vision/Vision/Vision.sdf
 Vision/Vision/Vision.opensdf
 Vision/Vision/Vision.sdf
 Vision/Vision/Vision/Debug/Vision.vcxprojResolveAssemblyReference.cache
+=======
+*.tlog
+*.ipch
+*.metagen
+>>>>>>> origin/master
