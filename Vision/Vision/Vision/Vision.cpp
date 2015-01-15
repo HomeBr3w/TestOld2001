@@ -10,8 +10,12 @@ using namespace std;
 
 int main(array<System::String ^> ^args)
 {
+	// is er een arg>?
+	System::String^ str = "C:/imgq.jpg";
+	if (args->Length) { str = args[0]; }
+
 	// Importeer een afbeelding
-	cv::Mat img = cv::imread("C:/img.jpg", CV_LOAD_IMAGE_UNCHANGED);
+	cv::Mat img = cv::imread("C:/imgq.jpg", CV_LOAD_IMAGE_UNCHANGED);
 	cv::Mat grey;
 
 	if (img.empty())
@@ -40,17 +44,100 @@ int main(array<System::String ^> ^args)
 		rowCounted.at<uchar>(r, 0) = cvRound(count / grey.cols); // Gemmiddelde uitrekenen
 	}
 	
+	// Vind het aantal blobs en kijk of het 'systemen' zijn.
+	vector<int> found;
 
+	Int32 count = 0;
+	Int32 mean = 0;
+	Int32 thresh_blob;
 
+	cout << "Gevonden waardes" << endl;
+	for (int r = 0; r < rowCounted.rows; r++)
+	{
+		Int32  c = rowCounted.at<uchar>(r, 0);
+		if (c < 127) {
+			//cout << r << " -> " << c << endl;
+			
+			if (found.size() > 1)
+			{
+				mean += (r - found.at(count));
+				count++;
+			}
+			
+			found.push_back(r);
 
-	cv::namedWindow("Grijs", CV_WINDOW_AUTOSIZE);
-	cv::imshow("Grijs", img);
+			cout << r << endl;
+		}
+	}
 
+	vector<vector<int>> blobList;
+
+	thresh_blob = cvRound(mean / count);
+	int minval = found.at(0);
+	int maxval = 0;
+	int i = 1;
+	for (i; i < found.size()-1; i++)
+	{
+		if (found.at(i) - found.at(i - 1) > thresh_blob)
+		{
+			vector<int> temp;
+
+			maxval = found.at(i - 1);
+
+			temp.push_back(minval);
+			temp.push_back(maxval);
+
+			blobList.push_back(temp);
+
+			
+			cout << "Blob gevonden van " << minval << " naar " << maxval << endl;
+			minval = found.at(i);
+		}
+	}
+	vector<int> temp;
+	temp.push_back(minval);
+	maxval = found.at(i);
+	temp.push_back(maxval);
+	blobList.push_back(temp);
+	//cout << "Blob gevonden van " << minval << " naar " << maxval << endl;
+	
+	//Teken gevonden blobs
+	cv::namedWindow("Notefind", CV_WINDOW_AUTOSIZE);
+
+	for (int i = 0; i < blobList.size(); i++)
+	{
+		int margin = cvRound((blobList.at(i).at(1) - blobList.at(i).at(0)) / 4);
+		cv::line(grey, cv::Point(0, blobList.at(i).at(0) - margin * 3), cv::Point(img.cols, blobList.at(i).at(0) - margin * 3), cv::Scalar(255, 0, 0), 3, 8, 0);
+		cv::line(grey, cv::Point(0, blobList.at(i).at(1) + margin * 3), cv::Point(img.cols, blobList.at(i).at(1) + margin * 3), cv::Scalar(0, 255, 0), 3, 8, 0);
+
+		cv::line(grey, cv::Point(0, blobList.at(i).at(0) - margin * 2), cv::Point(img.cols, blobList.at(i).at(0) - margin * 2), cv::Scalar(0, 0, 255), 1, 8, 0);
+		cv::line(grey, cv::Point(0, blobList.at(i).at(1) + margin * 2), cv::Point(img.cols, blobList.at(i).at(1) + margin * 2), cv::Scalar(0, 0, 255), 1, 8, 0);
+
+		cv::line(grey, cv::Point(0, blobList.at(i).at(0) - margin), cv::Point(img.cols, blobList.at(i).at(0) - margin), cv::Scalar(0, 0, 255), 1, 8, 0);
+		cv::line(grey, cv::Point(0, blobList.at(i).at(1) + margin), cv::Point(img.cols, blobList.at(i).at(1) + margin), cv::Scalar(0, 0, 255), 1, 8, 0);
+
+		cv::line(grey, cv::Point(0, blobList.at(i).at(0)), cv::Point(img.cols, blobList.at(i).at(0)), cv::Scalar(0, 0, 255), 1, 8, 0);
+		cv::line(grey, cv::Point(0, blobList.at(i).at(1)), cv::Point(img.cols, blobList.at(i).at(1)), cv::Scalar(0, 0, 255), 1, 8, 0);
+
+		cv::line(grey, cv::Point(0, blobList.at(i).at(0) + margin), cv::Point(img.cols, blobList.at(i).at(0) + margin), cv::Scalar(0, 0, 255), 1, 8, 0);
+		cv::line(grey, cv::Point(0, blobList.at(i).at(1) - margin), cv::Point(img.cols, blobList.at(i).at(1) - margin), cv::Scalar(0, 0, 255), 1, 8, 0);
+
+		cv::line(grey, cv::Point(0, blobList.at(i).at(0) + margin * 2), cv::Point(img.cols, blobList.at(i).at(0) + margin * 2), cv::Scalar(0, 0, 255), 1, 8, 0);
+
+		for (int i = 1; i < img.cols-11; i++)
+		{
+			cv::Mat t = img(cv::Rect(i, blobList.at(i).at(0) - margin * 3, 10, (blobList.at(i).at(1) + margin * 3) - (blobList.at(i).at(0) - margin * 3)));
+			cv::imshow("Notefind", t);
+			cv::waitKey(0);
+		}
+	}
+
+	
 	cv::namedWindow("Bron", CV_WINDOW_AUTOSIZE);
-	cv::imshow("Bron", grey);
+	cv::imshow("Bron", img);
 
-	cv::namedWindow("Lijnen", CV_WINDOW_AUTOSIZE);
-	cv::imshow("Lijnen", rowCounted);
+	cv::namedWindow("Oplossing", CV_WINDOW_AUTOSIZE);
+	cv::imshow("Oplossing", grey);
 
 	cv::waitKey(0);
 	cv::destroyWindow("Bron");
