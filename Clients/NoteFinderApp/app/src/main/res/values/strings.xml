@@ -4,5 +4,7 @@
     <string name="app_name">NoteFinderApp-android</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="takepictureText">Take Picture</string>
+    <string name="sendpictureText">Send Picture</string>
 
 </resources>
