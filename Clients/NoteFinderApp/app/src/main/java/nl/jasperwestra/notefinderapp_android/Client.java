@@ -39,8 +39,6 @@ public class Client {
 
     public void sendSheet(File sheetMusic)
     {
-        if (/*isDownloadManagerAvailable(context)*/true)
-        {
             DownloadManager.Request request = new DownloadManager.Request(Uri.parse(httpLink));
             request.setDescription("Download generated mp3");
             request.setTitle("Generated mp3");
@@ -53,8 +51,7 @@ public class Client {
 
             DownloadManager manager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
             manager.enqueue(request);
-        }
-        else {
+
             Log.d("HTTP", "Sending request to " + httpLink);
             PrintWriter writer = null;
             BufferedReader reader = null;
@@ -80,22 +77,6 @@ public class Client {
                     Log.d("HTTP", "Error closing reader.");
                 }
             }
-        }
-    }
 
-    public static boolean isDownloadManagerAvailable(Context context) {
-        try {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
-                return false;
-            }
-            Intent intent = new Intent(Intent.ACTION_MAIN);
-            intent.addCategory(Intent.CATEGORY_LAUNCHER);
-            intent.setClassName("com.android.providers.downloads.ui", "com.android.providers.downloads.ui.DownloadList");
-            List<ResolveInfo> list = context.getPackageManager().queryIntentActivities(intent,
-                    PackageManager.MATCH_DEFAULT_ONLY);
-            return list.size() > 0;
-        } catch (Exception e) {
-            return false;
-        }
     }
 }
