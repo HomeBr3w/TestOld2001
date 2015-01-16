@@ -33,29 +33,6 @@ public class MainActivity extends ActionBarActivity {
         this.cameraView = (ImageView)findViewById(R.id.cameraView);
     }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
     public void takePicture(View view)
     {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -66,21 +43,21 @@ public class MainActivity extends ActionBarActivity {
     {
         if(image != null)
         {
-            Client client = new Client("jasperwestra.nl");
+            Client client = new Client("http://jasperwestra.nl", getBaseContext());
             File file = new File("image.bmp");
             ByteArrayOutputStream output = new ByteArrayOutputStream();
             image.compress(Bitmap.CompressFormat.PNG, 0, output);
             byte[] bitmapdata = output.toByteArray();
             FileOutputStream fos;
             try {
-                fos = new FileOutputStream(file);
-                fos.write(bitmapdata);
+                //fos = new FileOutputStream(file);
+                //fos.write(bitmapdata);
                 client.sendSheet(file);
-                fos.close();
+                //fos.close();
             }
             catch(Exception ex)
             {
-                Log.d("PICTURE", "Could not send image. " + ex.getMessage());
+                Log.d("PICTURE", "Could not read image. " + ex.getMessage());
             }
         }
         else
@@ -104,7 +81,7 @@ public class MainActivity extends ActionBarActivity {
             image = (Bitmap)data.getExtras().get("data");
             cameraView.setImageBitmap(image);
             Button sendButton = (Button)this.findViewById(R.id.sendPictureButton);
-            sendButton.setActivated(true);
+            sendButton.setEnabled(true);
         }
     }
 }
