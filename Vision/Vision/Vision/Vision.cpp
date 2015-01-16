@@ -8,19 +8,20 @@
 using namespace System;
 using namespace std;
 
-int main(array<System::String ^> ^args)
+int main(int argc, char *argv[])
 {
 	// is er een arg>?
-	System::String^ str = "C:/imgq.jpg";
-	if (args->Length) { str = args[0]; }
+	string imageName = "C:/opencv/img.jpg";
+	if (argc > 1) { imageName = argv[0]; }
 
 	// Importeer een afbeelding
-	cv::Mat img = cv::imread("C:/imgq.jpg", CV_LOAD_IMAGE_UNCHANGED);
+	cv::Mat img = cv::imread(imageName, CV_LOAD_IMAGE_UNCHANGED);
 	cv::Mat grey;
 
 	if (img.empty())
 	{
 		cout << "Error : Geen afbeelding??" << endl;
+		cin.get();
 		return -1;
 	}
 
@@ -103,33 +104,73 @@ int main(array<System::String ^> ^args)
 	
 	//Teken gevonden blobs
 	cv::namedWindow("Notefind", CV_WINDOW_AUTOSIZE);
+	cv::namedWindow("Tmp", CV_WINDOW_AUTOSIZE);
 
 	for (int i = 0; i < blobList.size(); i++)
 	{
 		int margin = cvRound((blobList.at(i).at(1) - blobList.at(i).at(0)) / 4);
-		cv::line(grey, cv::Point(0, blobList.at(i).at(0) - margin * 3), cv::Point(img.cols, blobList.at(i).at(0) - margin * 3), cv::Scalar(255, 0, 0), 3, 8, 0);
-		cv::line(grey, cv::Point(0, blobList.at(i).at(1) + margin * 3), cv::Point(img.cols, blobList.at(i).at(1) + margin * 3), cv::Scalar(0, 255, 0), 3, 8, 0);
+		cv::line(img, cv::Point(0, blobList.at(i).at(0) - margin * 3), cv::Point(img.cols, blobList.at(i).at(0) - margin * 3), cv::Scalar(255, 0, 0), 3, 8, 0);
+		cv::line(img, cv::Point(0, blobList.at(i).at(1) + margin * 3), cv::Point(img.cols, blobList.at(i).at(1) + margin * 3), cv::Scalar(0, 255, 0), 3, 8, 0);
 
-		cv::line(grey, cv::Point(0, blobList.at(i).at(0) - margin * 2), cv::Point(img.cols, blobList.at(i).at(0) - margin * 2), cv::Scalar(0, 0, 255), 1, 8, 0);
-		cv::line(grey, cv::Point(0, blobList.at(i).at(1) + margin * 2), cv::Point(img.cols, blobList.at(i).at(1) + margin * 2), cv::Scalar(0, 0, 255), 1, 8, 0);
+		int x = 0;
+		int y = blobList.at(i).at(0) - margin * 3;
+		int width = img.cols;
+		int height = (blobList.at(i).at(1) + margin * 3) - (blobList.at(i).at(0) - margin * 3);
+		cv::Rect roi(x, y, width, height);
+		//rois.push_back(cv::Rect(x, y, width, height));
 
-		cv::line(grey, cv::Point(0, blobList.at(i).at(0) - margin), cv::Point(img.cols, blobList.at(i).at(0) - margin), cv::Scalar(0, 0, 255), 1, 8, 0);
-		cv::line(grey, cv::Point(0, blobList.at(i).at(1) + margin), cv::Point(img.cols, blobList.at(i).at(1) + margin), cv::Scalar(0, 0, 255), 1, 8, 0);
 
-		cv::line(grey, cv::Point(0, blobList.at(i).at(0)), cv::Point(img.cols, blobList.at(i).at(0)), cv::Scalar(0, 0, 255), 1, 8, 0);
-		cv::line(grey, cv::Point(0, blobList.at(i).at(1)), cv::Point(img.cols, blobList.at(i).at(1)), cv::Scalar(0, 0, 255), 1, 8, 0);
 
-		cv::line(grey, cv::Point(0, blobList.at(i).at(0) + margin), cv::Point(img.cols, blobList.at(i).at(0) + margin), cv::Scalar(0, 0, 255), 1, 8, 0);
-		cv::line(grey, cv::Point(0, blobList.at(i).at(1) - margin), cv::Point(img.cols, blobList.at(i).at(1) - margin), cv::Scalar(0, 0, 255), 1, 8, 0);
 
-		cv::line(grey, cv::Point(0, blobList.at(i).at(0) + margin * 2), cv::Point(img.cols, blobList.at(i).at(0) + margin * 2), cv::Scalar(0, 0, 255), 1, 8, 0);
 
+		
+		int sumX = 0;
+		int frameWidth = margin * 3;
+		cv::Mat bar = cv::Mat(img, roi);
+		cv::imshow("Notefind", bar);
+		cv::waitKey(0);
+		while (sumX < img.cols)
+		{
+			int frameX = sumX;
+			int frameY = 0;
+			cv::Rect partOfBar(frameX, frameY, frameWidth, bar.rows);
+			cv::Mat frame(bar, partOfBar);
+
+			sumX += frameWidth;
+			cv::imshow("Tmp", frame);
+			cv::waitKey(0);
+		}
+		cv::destroyWindow("Tmp");
+
+
+
+
+
+
+
+
+		/*
+		cv::line(img, cv::Point(0, blobList.at(i).at(0) - margin * 2), cv::Point(img.cols, blobList.at(i).at(0) - margin * 2), cv::Scalar(0, 0, 255), 1, 8, 0);
+		cv::line(img, cv::Point(0, blobList.at(i).at(1) + margin * 2), cv::Point(img.cols, blobList.at(i).at(1) + margin * 2), cv::Scalar(0, 0, 255), 1, 8, 0);
+
+		cv::line(img, cv::Point(0, blobList.at(i).at(0) - margin), cv::Point(img.cols, blobList.at(i).at(0) - margin), cv::Scalar(0, 0, 255), 1, 8, 0);
+		cv::line(img, cv::Point(0, blobList.at(i).at(1) + margin), cv::Point(img.cols, blobList.at(i).at(1) + margin), cv::Scalar(0, 0, 255), 1, 8, 0);
+
+		cv::line(img, cv::Point(0, blobList.at(i).at(0)), cv::Point(img.cols, blobList.at(i).at(0)), cv::Scalar(0, 0, 255), 1, 8, 0);
+		cv::line(img, cv::Point(0, blobList.at(i).at(1)), cv::Point(img.cols, blobList.at(i).at(1)), cv::Scalar(0, 0, 255), 1, 8, 0);
+
+		cv::line(img, cv::Point(0, blobList.at(i).at(0) + margin), cv::Point(img.cols, blobList.at(i).at(0) + margin), cv::Scalar(0, 0, 255), 1, 8, 0);
+		cv::line(img, cv::Point(0, blobList.at(i).at(1) - margin), cv::Point(img.cols, blobList.at(i).at(1) - margin), cv::Scalar(0, 0, 255), 1, 8, 0);
+
+		cv::line(img, cv::Point(0, blobList.at(i).at(0) + margin * 2), cv::Point(img.cols, blobList.at(i).at(0) + margin * 2), cv::Scalar(0, 0, 255), 1, 8, 0);*/
+
+		/*
 		for (int i = 1; i < img.cols-11; i++)
 		{
 			cv::Mat t = img(cv::Rect(i, blobList.at(i).at(0) - margin * 3, 10, (blobList.at(i).at(1) + margin * 3) - (blobList.at(i).at(0) - margin * 3)));
 			cv::imshow("Notefind", t);
 			cv::waitKey(0);
-		}
+		}*/
 	}
 
 	
