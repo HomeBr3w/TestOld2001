@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
 	// is er een arg>?
 	string imageName = "";
 	imageName.append(std::getenv("OPENCV"));
-	imageName.append("\\imgq.jpg");
+	imageName.append("\\img.jpg");
 
 	if (argc > 1) { imageName = argv[0]; }
 
