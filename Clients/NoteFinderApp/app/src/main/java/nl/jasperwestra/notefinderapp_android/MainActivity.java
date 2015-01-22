@@ -1,6 +1,7 @@
 package nl.jasperwestra.notefinderapp_android;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -32,6 +33,7 @@ public class MainActivity extends ActionBarActivity {
     private ImageView cameraView;
     private File image;
     private String picturePath;
+    public static final String NOTE_ROOT_LOCATION = Environment.getExternalStorageDirectory().toString() + "/noteapp/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +69,6 @@ public class MainActivity extends ActionBarActivity {
                 this.showAlert("Image saving failed.");
                 Log.e("IMAGE","Image saving failed.");
             }
-            Log.d("PICTURE","Picture taken.");
         }
     }
 
@@ -79,8 +80,23 @@ public class MainActivity extends ActionBarActivity {
     {
         if(image != null)
         {
-            Client client = new Client("http://jasperwestra.nl", getBaseContext());
-            client.sendSheet(image);
+            ProgressDialog progressDialog;
+
+            progressDialog = new ProgressDialog(MainActivity.this);
+            progressDialog.setMessage("Sending file and calculating result...");
+            progressDialog.setIndeterminate(true);
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            progressDialog.setCancelable(true);
+
+            final ParseDownload downloadTask = new ParseDownload(MainActivity.this, progressDialog ,image);
+            downloadTask.execute("http://jasperwestra.nl/post.php");
+
+            progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    downloadTask.cancel(true);
+                }
+            });
         }
         else
         {
@@ -100,12 +116,11 @@ public class MainActivity extends ActionBarActivity {
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
             Button sendButton = (Button)this.findViewById(R.id.sendPictureButton);
 
-
             addPictureToGallery();
             setPictureInView();
 
             sendButton.setEnabled(true);
-            Log.d("RESULT","ActivityResult was written back!");
+            Log.d("RESULT","Picture taken.");
         }
         else {
             Log.e("RESULT", "ERROR IN RESULT");
@@ -155,11 +170,21 @@ public class MainActivity extends ActionBarActivity {
     {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "NOTEAPP_JPEG_" + timeStamp;
+        /*
         String storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString();
         File imageFile = new File(storageDir + "/" + imageFileName + ".jpg");
         picturePath = "file:" + imageFile.getAbsolutePath();
+        */
+        File directory = new File(NOTE_ROOT_LOCATION);
+        directory.mkdirs();
+        File imageFile = new File(directory, imageFileName + ".jpg");
+        if(imageFile.exists())
+        {
+            imageFile.delete();
+        }
 
-        Log.e("LOCATION", picturePath);
+        picturePath = imageFile.getAbsolutePath();
+        Log.d("LOCATION", picturePath);
         return imageFile;
     }
 
