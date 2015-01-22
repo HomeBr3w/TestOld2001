@@ -10,7 +10,14 @@ import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
 
+import org.apache.http.Header;
 import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.InputStreamEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -39,6 +46,7 @@ public class Client {
 
     public void sendSheet(File sheetMusic)
     {
+        /*
             DownloadManager.Request request = new DownloadManager.Request(Uri.parse(httpLink));
             request.setDescription("Download generated mp3");
             request.setTitle("Generated mp3");
@@ -78,5 +86,20 @@ public class Client {
                 }
             }
 
+        try {
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost httppost = new HttpPost(httpLink);
+            InputStreamEntity reqEntity = new InputStreamEntity(new FileInputStream(sheetMusic), -1);
+            reqEntity.setContentType("binary/octet-stream");
+            reqEntity.setChunked(true);
+            httppost.setEntity(reqEntity);
+
+            HttpResponse response = httpclient.execute(httppost);
+
+        } catch (IOException ioEx) {
+            Log.d("HTTP", "IOException raised: " + ioEx.getMessage());
+        }*/
+
+        //new ParseDownload(sheetMusic, httpLink);
     }
 }
