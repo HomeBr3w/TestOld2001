@@ -66,7 +66,6 @@ int main(int argc, char *argv[])
 	cv::destroyWindow("Bron");
 	cv::destroyWindow("Grijs");
 
-
 	/*vector<cv::Vec3f> circles;
 	//vector<cv::Mat> images;
 
