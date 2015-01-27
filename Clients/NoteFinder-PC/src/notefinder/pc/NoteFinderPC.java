@@ -1,5 +1,7 @@
 package notefinder.pc;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.animation.FadeTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -56,35 +58,14 @@ public class NoteFinderPC extends Application {
     } 
     
     private void showMainStage() {
-        Scene scene = new Scene(new VBox(), 800, 600);
-        
-        MenuBar menuBar = new MenuBar();
-        
-        Menu mf = new Menu("Import", new ImageView(new Image("img/camera104.png")));
-        MenuItem mfo = new MenuItem("Open image file");
-        MenuItem mfs = new MenuItem("Scan image");
-        mf.getItems().addAll(mfo, mfs);
-        
-        Menu me = new Menu("Export", new ImageView(new Image("img/note54.png")));
-        MenuItem me3 = new MenuItem("To mp3");
-        MenuItem mem = new MenuItem("To midi");
-        me.getItems().addAll(me3, mem);
-        
-        Menu ms = new Menu("Settings", new ImageView(new Image("img/repair17.png")));
-        
-        menuBar.getMenus().addAll(mf, me, ms);
-        
-        Button btn = new Button();
-        btn.setText("Say 'Hello World'");
-        btn.setOnAction(new EventHandler<ActionEvent>() {
-            
-            @Override
-            public void handle(ActionEvent event) {
-                System.out.println("Hello World!");
-            }
-        });
-        
-        ((VBox) scene.getRoot()).getChildren().addAll(menuBar);
+        try {
+            Programma p = new Programma();
+            Application app2 = p;
+            Stage anotherStage = new Stage();
+            app2.start(anotherStage);
+        } catch (Exception ex) {
+            Logger.getLogger(NoteFinderPC.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     private void hideSplash(Stage initStage)
