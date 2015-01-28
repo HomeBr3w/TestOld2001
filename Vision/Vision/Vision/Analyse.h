@@ -1,3 +1,7 @@
+
+#ifndef _ANALYSE_HEADER_
+#define _ANALYSE_HEADER_
+
 #include "opencv2\highgui\highgui.hpp"
 #include "opencv2\imgproc\imgproc.hpp"
 #include <iostream>
@@ -14,3 +18,5 @@ public :
 	static void drawOneDimensionalBlobsVertical(std::vector<std::vector<int>>, cv::Mat);
 	static std::vector<cv::Mat> getROIperBlob(std::vector<std::vector<int>>, cv::Mat);
 };
+
+#endif

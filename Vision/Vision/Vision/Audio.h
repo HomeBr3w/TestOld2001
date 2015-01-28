@@ -1,4 +1,6 @@
 
+#ifndef _AUDIO_HEADER_
+#define _AUDIO_HEADER_
 
 class Audio
 {
@@ -10,3 +12,5 @@ public:
 	void convertSongToMidi();
 
 };
+
+#endif

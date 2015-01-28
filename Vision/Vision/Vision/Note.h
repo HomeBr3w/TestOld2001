@@ -1,4 +1,7 @@
 
+#ifndef _NOTE_HEADER_
+#define _NOTE_HEADER_
+
 const enum NoteType { A, B, C, D, E, F, G, PAUSE,  };
 
 class Note
@@ -17,3 +20,5 @@ public:
 	void setType(NoteType type);
 	void setDuration(float duration);
 };
+
+#endif

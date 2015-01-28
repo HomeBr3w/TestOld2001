@@ -1,4 +1,7 @@
 
+#ifndef _SONG_HEADER_
+#define _SONG_HEADER_
+
 #include "Note.h"
 #include <vector>
 
@@ -16,3 +19,5 @@ public:
 	void removeNoteAt(int index);
 	void removeNote(Note note);
 };
+
+#endif
