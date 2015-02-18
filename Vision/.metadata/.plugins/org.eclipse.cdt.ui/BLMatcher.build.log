@@ -1,0 +1,6 @@
+15:34:41 **** Build of configuration Default for project BLMatcher ****
+make all 
+make: *** No rule to make target `all'.  Stop.
+
+15:34:41 Build Finished (took 63ms)
+
