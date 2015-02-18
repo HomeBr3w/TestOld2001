@@ -1,3 +1,34 @@
-15:34:41 **** Build of configuration Default for project BLMatcher ****
+
+**** Build of configuration Debug for project BLMatcher ****
+
+Nothing to build for project BLMatcher
+15:37:26 **** Incremental Build of configuration Debug for project BLMatcher ****
 make all 
-make: *** No rule to make target `all'.  Stop.
+Building file: ../Tools/Dtools.cpp
+Invoking: Cross G++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"Tools/Dtools.d" -MT"Tools/Dtools.d" -o "Tools/Dtools.o" "../Tools/Dtools.cpp"
+Finished building: ../Tools/Dtools.cpp
+ 
+Building file: ../Tools/MTools.cpp
+Invoking: Cross G++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"Tools/MTools.d" -MT"Tools/MTools.d" -o "Tools/MTools.o" "../Tools/MTools.cpp"
+Finished building: ../Tools/MTools.cpp
+ 
+Building file: ../StTools/Point2D.cpp
+Invoking: Cross G++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"StTools/Point2D.d" -MT"StTools/Point2D.d" -o "StTools/Point2D.o" "../StTools/Point2D.cpp"
+Finished building: ../StTools/Point2D.cpp
+ 
+Building file: ../BLMatcher.cpp
+Invoking: Cross G++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"BLMatcher.d" -MT"BLMatcher.d" -o "BLMatcher.o" "../BLMatcher.cpp"
+Finished building: ../BLMatcher.cpp
+ 
+Building target: BLMatcher
+Invoking: Cross G++ Linker
+g++  -o "BLMatcher"  ./Tools/Dtools.o ./Tools/MTools.o  ./StTools/Point2D.o  ./BLMatcher.o   
+Finished building target: BLMatcher
+ 
+15:37:31 **** Incremental Build of configuration Debug for project BLMatcher ****
+make all 
+make: Nothing to be done for `all'.
