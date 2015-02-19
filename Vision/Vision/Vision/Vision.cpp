@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
 	// is er een arg>?
 	string imageName = "";
 	imageName.append(std::getenv("OPENCV"));
-	imageName.append("\\img.jpg");
+	imageName.append("\\imgw.jpg");
 
 	if (argc > 1) { imageName = argv[0]; }
 
@@ -42,19 +42,21 @@ int main(int argc, char *argv[])
 	// Vind het aantal blobs en kijk of het 'systemen' zijn.
 	vector<vector<int>> blobList = Analyse::oneDimensionalHorizontalBlobFinder(rowCounted);
 	
-	//Teken gevonden blobs
-	Analyse::drawOneDimensionalBlobsHorizontal(blobList, img);
-
-	//Uitsnedes maken van notenbalken
+	//Uitsnedes maken van notenbalken en het kwardratische verticalegemiddelde berekenen per balk
 	std::vector<cv::Mat> rois = Analyse::getROIperBlob(blobList, img);
+
 	cv::namedWindow("Uitsnede", CV_WINDOW_AUTOSIZE);
 	for each (cv::Mat var in rois)
 	{
-		cv::imshow("Uitsnede", var);
+		cv::Mat filteredImage = Analyse::filterDifference(var, Analyse::averageRows(var));
+		
+		cv::imshow("Uitsnede", filteredImage);
 		cv::waitKey(0);
 	}
 	cv::destroyWindow("Uitsnede");
 
+	//Teken gevonden blobs
+	Analyse::drawOneDimensionalBlobsHorizontal(blobList, img);
 
 	cv::namedWindow("Bron", CV_WINDOW_AUTOSIZE);
 	cv::imshow("Bron", img);

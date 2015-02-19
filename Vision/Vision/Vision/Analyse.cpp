@@ -31,6 +31,24 @@ cv::Mat Analyse::averageRows(cv::Mat bron)
 	return rowCounted;
 }
 
+cv::Mat Analyse::averageCols(cv::Mat bron)
+{
+	cv::Mat colCounted = cv::Mat(1, bron.cols, IPL_DEPTH_16U);
+	cv::cvtColor(colCounted, colCounted, CV_RGB2GRAY); // Hacky methode om een leeg zwartwit plaatje te krijgen.
+
+	for (int c = 0; c < bron.cols; c++)
+	{
+		System::Int32 count = 0;
+		for (int r = 0; r < bron.rows; r++)
+		{
+			count += bron.at<uchar>(r, c);
+		}
+		colCounted.at<uchar>(0, c) = cvRound(count / bron.rows); // Gemmiddelde uitrekenen
+	}
+
+	return colCounted;
+}
+
 std::vector<std::vector<int>> Analyse::oneDimensionalHorizontalBlobFinder(cv::Mat bron)
 {
 	std::vector<int> found;
@@ -81,6 +99,33 @@ std::vector<std::vector<int>> Analyse::oneDimensionalHorizontalBlobFinder(cv::Ma
 	blobList.push_back(temp);
 
 	return blobList;
+}
+
+cv::Mat Analyse::filterDifference(cv::Mat src, cv::Mat filter)
+{
+	Analyse::thresholdISOBlack(filter, filter);
+	cv::Mat nw = cv::Mat(src.rows, src.cols, IPL_DEPTH_16U);
+	cv::cvtColor(nw, nw, CV_RGB2GRAY);
+	cv::cvtColor(src, src, CV_RGB2GRAY);
+
+	for (int c = 0; c < src.cols; c++)
+	{
+		for (int r = 0; r < src.rows; r++)
+		{
+			//nw.at<uchar>(r, c) = (src.at<uchar>(r, c) < filter.at<uchar>(r, 0)) ? 254 : 0;
+			//nw.at<uchar>(r, c) = filter.at<uchar>(r, 0);
+			if (filter.at<uchar>(r, 0) > 127 && src.at<uchar>(r, c) < 127)
+			{
+				nw.at<uchar>(r, c) = 0;
+			}
+			else
+			{
+				nw.at<uchar>(r, c) = 254;
+			}
+		}
+	}
+
+	return nw;
 }
 
 void Analyse::drawOneDimensionalBlobsHorizontal(std::vector<std::vector<int>> blobList, cv::Mat img)

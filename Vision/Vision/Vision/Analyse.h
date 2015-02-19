@@ -12,6 +12,8 @@ public :
 	static cv::Mat convertToGray(cv::Mat);
 	static void thresholdISOBlack(cv::Mat, cv::Mat);
 	static cv::Mat averageRows(cv::Mat);
+	static cv::Mat averageCols(cv::Mat);
+	static cv::Mat filterDifference(cv::Mat, cv::Mat);
 	static std::vector<std::vector<int>> oneDimensionalHorizontalBlobFinder(cv::Mat);
 	static std::vector<std::vector<int>> oneDimensionalVerticalBlobFinder(cv::Mat);
 	static void drawOneDimensionalBlobsHorizontal(std::vector<std::vector<int>>, cv::Mat);
