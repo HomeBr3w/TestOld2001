@@ -48,3 +48,9 @@ Vision/Vision/Vision/x64/Debug/app.res
 /Clients/KamertjeVullen/build/
 
 *.properties
+
+Java/Opencv2Test/build/classes/opencv2test/MatchResult.class
+
+Java/Opencv2Test/build/classes/opencv2test/Opencv2Test.class
+
+Java/Opencv2Test/build/classes/opencv2test/ClassifierImage.class
