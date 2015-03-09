@@ -1,9 +1,13 @@
 // Vision.cpp : main project file.
 
 #include "stdafx.h"
-#include "opencv2\imgproc\imgproc.hpp"
-#include "opencv2\highgui\highgui.hpp"
 #include <iostream>
+#include "opencv2/core/core.hpp"
+#include "opencv2/features2d/features2d.hpp"
+#include "opencv2/highgui/highgui.hpp"
+#include "opencv2/calib3d/calib3d.hpp"
+#include "opencv2/nonfree/nonfree.hpp"
+
 #include "Analyse.h"
 
 using namespace System;
@@ -11,6 +15,58 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
+	cv::Mat scene = cv::imread("C:/opencv/imgx.jpg", CV_LOAD_IMAGE_GRAYSCALE);
+	cv::Mat object = cv::imread("C:/opencv/kwart noot.jpg", CV_LOAD_IMAGE_GRAYSCALE);//image(cv::Range(240,320), cv::Range(100,150));
+	if (!scene.data || !object.data)
+		return 0;
+
+	cv::namedWindow("Original");
+	imshow("Original", scene);
+
+	cv::namedWindow("Template");
+	imshow("Template", object);
+
+	cv::waitKey();
+
+	cv::FastFeatureDetector detector(15);
+	vector<cv::KeyPoint> sceneKP, objectKP;
+	detector.detect(scene, sceneKP);
+	detector.detect(object, objectKP);
+
+	cv::SurfDescriptorExtractor extractor;
+	cv::Mat descriptorScene, descriptorObject;
+	extractor.compute(scene, sceneKP, descriptorScene);
+	extractor.compute(object, objectKP, descriptorObject);
+	
+	cv::BFMatcher matcher;
+	vector<cv::DMatch> matches;
+	matcher.match(descriptorScene, descriptorObject, matches);
+
+	cv::namedWindow("matches", 1);
+	cv::Mat img_matches;
+	cv::drawMatches(scene, sceneKP, object, objectKP, matches, img_matches);
+	imshow("matches", img_matches);
+
+	vector<cv::Point2f> objectPoints, scenePoints;
+	
+	for (int i = 0; i < matches.size(); i++)
+	{
+		//-- Get the keypoints from the good matches
+		objectPoints.push_back(objectKP[matches[i].queryIdx].pt);
+		scenePoints.push_back(sceneKP[matches[i].trainIdx].pt);
+	}
+	
+	cv::Mat H = cv::findHomography(cv::Mat(objectPoints), cv::Mat(scenePoints), CV_RANSAC);
+
+	cv::Mat points1Projected;
+	perspectiveTransform(cv::Mat(scenePoints), points1Projected, H);
+
+	imshow("Good Matches & Object detection", points1Projected);
+	cv::waitKey(0);
+	return 0;
+
+
+	/*
 	// is er een arg>?
 	string imageName = "";
 	imageName.append(std::getenv("OPENCV"));
@@ -68,7 +124,7 @@ int main(int argc, char *argv[])
 	cv::destroyWindow("Bron");
 	cv::destroyWindow("Grijs");
 
-	/*vector<cv::Vec3f> circles;
+	vector<cv::Vec3f> circles;
 	//vector<cv::Mat> images;
 
 	cv::HoughCircles(grey, circles, CV_HOUGH_GRADIENT, 1, 30, 20, 10, 2, 6);
