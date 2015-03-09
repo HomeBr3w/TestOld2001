@@ -11,22 +11,15 @@ import org.opencv.core.Mat;
  *
  * @author Siebren
  */
-public class ClassifierImage extends Mat {
+public class MatchResult {
 
-    private final String imageName;
     private final Mat image;
+    private final ClassifierImage bestMatch;
+    private final int confidence;
 
-    public ClassifierImage(String name, Mat image) {
-        this.imageName = name;
+    public MatchResult(int confidence, ClassifierImage bestMatch, Mat image) {
+        this.confidence = confidence;
+        this.bestMatch = bestMatch;
         this.image = image;
     }
-
-    public String getName() {
-        return imageName;
-    }
-
-    public Mat getImage() {
-        return image;
-    }
-
 }
