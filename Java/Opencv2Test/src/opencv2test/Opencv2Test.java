@@ -16,8 +16,11 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.WindowConstants;
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
+import org.opencv.core.Point;
+import org.opencv.core.Scalar;
 import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
 
@@ -65,6 +68,22 @@ public class Opencv2Test {
             // Vind het aantal blobs en kijk of het 'noten' zijn.
             ArrayList<ArrayList<Integer>> noteList = Analyse.oneDimensionalVerticalBlobFinder(Analyse.averageCols(filteredImage));
 
+            //-
+            Imgproc.cvtColor(filteredImage, filteredImage, Imgproc.);
+            Mat circles = new Mat();
+            int minRadius = 10;
+            int maxRadius = 18;
+            Imgproc.HoughCircles(img, circles, Imgproc.CV_HOUGH_GRADIENT, 1, minRadius, 120, 10, minRadius, maxRadius);
+            
+            for(int i = 0; i < circles.cols(); i++) {
+                double[] circle = circles.get(0, i);
+                Point center = new Point((int)Math.round(circle[0]), (int)Math.round(circle[1]));
+                int radius = (int)Math.round(circle[2]);
+                Core.circle( img, center, 3, new Scalar(0,255,0), -1, 8, 0 );
+                Core.circle(img, center, radius, new Scalar(0,0,255), 3, 8, 0);
+            }
+            //-
+            
             Analyse.drawOneDimensionalBlobsVertical(noteList, filteredImage);
 
             showResult(filteredImage);

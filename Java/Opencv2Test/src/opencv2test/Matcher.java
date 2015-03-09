@@ -13,7 +13,6 @@ public class Matcher
 {
     private boolean mirrorImage;
     private int rotations = 16;
-    private ArrayList<ClassifierImage> 
     
     public Matcher()
     {

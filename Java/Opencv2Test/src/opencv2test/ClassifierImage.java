@@ -9,6 +9,6 @@ package opencv2test;
  *
  * @author Siebren
  */
-public class ClassifierImage extends Mat {
+public class ClassifierImage {
     
 }
