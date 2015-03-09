@@ -7,6 +7,7 @@ import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
+import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
 
 public class Analyse
@@ -245,10 +246,14 @@ public class Analyse
     
     public static void drawOneDimensionalBlobsVertical(ArrayList<ArrayList<Integer>> blobList, Mat img)
     {
+        Mat cropped = img.clone();
         for (int i = 0; i < blobList.size(); i++)
         {
             Core.line(img, new Point(blobList.get(i).get(0), 5), new Point(blobList.get(i).get(0), img.rows()-5), new Scalar(0, 255, 255));
             Core.line(img, new Point(blobList.get(i).get(1), 5), new Point(blobList.get(i).get(1), img.rows()-5), new Scalar(0, 255, 255));
+            
+            Rect roi = new Rect(blobList.get(i).get(0), 5, blobList.get(i).get(1)-blobList.get(i).get(0), img.rows()-5);
+            Highgui.imwrite("C:/" + i + ".jpg", cropped.submat(roi));
         }
     }
 
