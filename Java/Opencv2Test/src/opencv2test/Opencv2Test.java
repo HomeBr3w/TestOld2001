@@ -5,6 +5,7 @@
  */
 package opencv2test;
 
+import com.sun.javafx.Utils;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -17,7 +18,6 @@ import javax.swing.JLabel;
 import javax.swing.WindowConstants;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
-import org.opencv.core.Size;
 import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
 
@@ -31,47 +31,52 @@ public class Opencv2Test {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        System.load(new File("/opt/local/share/OpenCV/java/libopencv_java2410.dylib").getAbsolutePath());
+        Mat img;
+        
+        if (Utils.isWindows()) {
+            System.load(new File("C:\\opencv\\build\\java\\x64\\opencv_java2410.dll").getAbsolutePath());
+            img = Highgui.imread("C:/opencv/img.jpg");
+        } else {
+            System.load(new File("/opt/local/share/OpenCV/java/libopencv_java2410.dylib").getAbsolutePath());
+             img = Highgui.imread("/Users/jasper/Desktop/img.jpg");
+        }
+        
+        Mat grey = img.clone();
 
-        Mat img = Highgui.imread("/Users/jasper/Desktop/img.jpg");
+        // Convert de afbeelding naar grijswaarden
+        Analyse.convertToGrey(grey);
 
-	Mat grey = img.clone();
+        // Isoleer de zwarte stukken
+        Analyse.thresholdISOBlack(grey, grey);
 
-	// Convert de afbeelding naar grijswaarden
-	Analyse.convertToGrey(grey);
-
-	// Isoleer de zwarte stukken
-	Analyse.thresholdISOBlack(grey, grey);
-
-	// Bereken voor alle Rows het gemiddelde aan pixels in de columns.
-	Mat rowCounted = Analyse.averageRows(grey);
+        // Bereken voor alle Rows het gemiddelde aan pixels in de columns.
+        Mat rowCounted = Analyse.averageRows(grey);
         Analyse.thresholdISOBlack(rowCounted, rowCounted);
-	
-	// Vind het aantal blobs en kijk of het 'systemen' zijn.
-	ArrayList<ArrayList<Integer>> blobList = Analyse.oneDimensionalHorizontalBlobFinder(rowCounted);
-	
-	//Uitsnedes maken van notenbalken en het kwardratische verticalegemiddelde berekenen per balk
-	ArrayList<Mat> rois = Analyse.getROIperBlob(blobList, img);
-    
-	for (Mat v : rois)
-	{
+
+        // Vind het aantal blobs en kijk of het 'systemen' zijn.
+        ArrayList<ArrayList<Integer>> blobList = Analyse.oneDimensionalHorizontalBlobFinder(rowCounted);
+
+        //Uitsnedes maken van notenbalken en het kwardratische verticalegemiddelde berekenen per balk
+        ArrayList<Mat> rois = Analyse.getROIperBlob(blobList, img);
+
+        for (Mat v : rois) {
             Mat filteredImage = Analyse.filterDifference(v, Analyse.averageRows(v));
-            
+
             // Vind het aantal blobs en kijk of het 'noten' zijn.
             ArrayList<ArrayList<Integer>> noteList = Analyse.oneDimensionalVerticalBlobFinder(Analyse.averageCols(filteredImage));
 
             Analyse.drawOneDimensionalBlobsVertical(noteList, filteredImage);
-            
-            showResult(filteredImage);
-	}
 
-	//Teken gevonden blobs
-	Analyse.drawOneDimensionalBlobsHorizontal(blobList, img);
+            showResult(filteredImage);
+        }
+
+        //Teken gevonden blobs
+        Analyse.drawOneDimensionalBlobsHorizontal(blobList, img);
 
         showResult(img);
 	//showResult(grey);
         //showResult(rowCounted);
-    
+
         //Highgui.imwrite("/Users/jasper/Desktop/imgx.jpg", rowCounted);
     }
 
