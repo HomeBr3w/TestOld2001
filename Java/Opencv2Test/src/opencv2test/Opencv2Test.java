@@ -5,6 +5,7 @@
  */
 package opencv2test;
 
+import opencv2test.Core.Analyse;
 import com.sun.javafx.Utils;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -37,7 +38,7 @@ public class Opencv2Test {
 
     /**
      * @param args the command line arguments
-     */
+     */   
     public static void main(String[] args) {
         Mat img;
 
@@ -48,7 +49,11 @@ public class Opencv2Test {
             System.load(new File("/opt/local/share/OpenCV/java/libopencv_java2410.dylib").getAbsolutePath());
             img = Highgui.imread("/Users/jasper/Desktop/img.jpg");
         }
-
+        start(img);
+    }
+    
+    public static void start(Mat img)
+    {
         Mat grey = img.clone();
 
         // Convert de afbeelding naar grijswaarden
@@ -68,7 +73,7 @@ public class Opencv2Test {
         ArrayList<Mat> rois = Analyse.getROIperBlob(blobList, img);
 
         //Setup classifier & matcher
-        ArrayList<ClassifierImage> classifierImages = new ArrayList<>();
+        /*ArrayList<ClassifierImage> classifierImages = new ArrayList<>();
         classifierImages.add(new ClassifierImage("sleutel", Highgui.imread("C:\\Kees\\sleutel.jpg")));
         classifierImages.add(new ClassifierImage("kwartnoot", Highgui.imread("C:\\Kees\\kwartnoot.jpg")));
         classifierImages.add(new ClassifierImage("halvenoot", Highgui.imread("C:\\Kees\\halve noot.jpg")));
@@ -77,7 +82,7 @@ public class Opencv2Test {
         classifierImages.add(new ClassifierImage("achtste noot", Highgui.imread("C:\\Kees\\achtste noot.jpg")));
 
         Matcher blobMatcher = null;
-        blobMatcher = new Matcher(classifierImages);
+        blobMatcher = new Matcher(classifierImages);*/
 
         for (Mat v : rois) {
 
@@ -85,7 +90,6 @@ public class Opencv2Test {
 
             // Vind het aantal blobs en kijk of het 'noten' zijn.
             ArrayList<ArrayList<Integer>> noteList = Analyse.oneDimensionalVerticalBlobFinder(Analyse.averageCols(filteredImage));
-
             /*
             Imgproc.cvtColor(filteredImage, filteredImage, Imgproc.);
             Mat circles = new Mat();
@@ -104,7 +108,7 @@ public class Opencv2Test {
             
             Analyse.drawOneDimensionalBlobsVertical(noteList, filteredImage);
 
-            Analyse.matchBlobs(v, noteList, blobMatcher);
+            //Analyse.matchBlobs(v, noteList, blobMatcher);
 
             showResult(filteredImage);
         }
