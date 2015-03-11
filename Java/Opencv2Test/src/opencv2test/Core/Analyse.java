@@ -1,4 +1,4 @@
-package opencv2test;
+package opencv2test.Core;
 
 import java.util.ArrayList;
 import org.opencv.core.Core;

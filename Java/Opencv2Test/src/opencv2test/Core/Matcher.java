@@ -3,12 +3,20 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package opencv2test;
+package opencv2test.Core;
 
 /**
  *
  * @author Siebren
  */
-public class ClassifierImage {
+public class Matcher 
+{
+    private boolean mirrorImage;
+    private int rotations = 16;
+    
+    public Matcher()
+    {
+    }
+    
     
 }

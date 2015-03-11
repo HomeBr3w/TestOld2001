@@ -5,6 +5,7 @@
  */
 package opencv2test;
 
+import opencv2test.Core.Analyse;
 import com.sun.javafx.Utils;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -32,7 +33,7 @@ public class Opencv2Test {
 
     /**
      * @param args the command line arguments
-     */
+     */   
     public static void main(String[] args) {
         Mat img;
         
@@ -43,6 +44,15 @@ public class Opencv2Test {
             System.load(new File("/opt/local/share/OpenCV/java/libopencv_java2410.dylib").getAbsolutePath());
              img = Highgui.imread("/Users/jasper/Desktop/img.jpg");
         }
+        
+        start(img);
+    }
+    
+    public static void start(Mat img)
+    {
+        
+        
+        
         
         Mat grey = img.clone();
 
@@ -67,22 +77,6 @@ public class Opencv2Test {
 
             // Vind het aantal blobs en kijk of het 'noten' zijn.
             ArrayList<ArrayList<Integer>> noteList = Analyse.oneDimensionalVerticalBlobFinder(Analyse.averageCols(filteredImage));
-
-            //-
-            Imgproc.cvtColor(filteredImage, filteredImage, Imgproc.);
-            Mat circles = new Mat();
-            int minRadius = 10;
-            int maxRadius = 18;
-            Imgproc.HoughCircles(img, circles, Imgproc.CV_HOUGH_GRADIENT, 1, minRadius, 120, 10, minRadius, maxRadius);
-            
-            for(int i = 0; i < circles.cols(); i++) {
-                double[] circle = circles.get(0, i);
-                Point center = new Point((int)Math.round(circle[0]), (int)Math.round(circle[1]));
-                int radius = (int)Math.round(circle[2]);
-                Core.circle( img, center, 3, new Scalar(0,255,0), -1, 8, 0 );
-                Core.circle(img, center, radius, new Scalar(0,0,255), 3, 8, 0);
-            }
-            //-
             
             Analyse.drawOneDimensionalBlobsVertical(noteList, filteredImage);
 
