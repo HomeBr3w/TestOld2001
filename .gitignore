@@ -76,3 +76,5 @@ Java/Opencv2Test/src/opencv2test/MatchResults.java
 *.class
 
 *.class
+/Java/Opencv2Test/nbproject/private/
+*.xml~
