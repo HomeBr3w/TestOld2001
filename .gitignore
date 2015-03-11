@@ -72,3 +72,7 @@ Java/Opencv2Test/src/opencv2test/ClassifierImage.java
 Java/Opencv2Test/src/opencv2test/MatchResult.java
 
 Java/Opencv2Test/src/opencv2test/MatchResults.java
+
+*.class
+
+*.class

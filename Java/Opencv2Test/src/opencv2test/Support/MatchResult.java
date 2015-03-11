@@ -5,6 +5,7 @@
  */
 package opencv2test.Support;
 
+import opencv2test.Core.ClassifierImage;
 import org.opencv.core.Mat;
 
 /**
@@ -13,13 +14,45 @@ import org.opencv.core.Mat;
  */
 public class MatchResult {
 
-    /*private final Mat image;
-    private final ClassifierImage bestMatch;
-    private final int confidence;
+    private final Mat image;
+    private final ClassifierImage compare;
+    private final float confidence;
 
-    public MatchResult(int confidence, ClassifierImage bestMatch, Mat image) {
+    /**
+     * Creates a new instance of MatchResult.
+     * This is a data-holding class which is not doing any calculations.
+     * @param confidence
+     * @param compare
+     * @param image 
+     */
+    public MatchResult(float confidence, ClassifierImage compare, Mat image) {
         this.confidence = confidence;
-        this.bestMatch = bestMatch;
+        this.compare = compare;
         this.image = image;
-    }*/
+    }
+
+    /**
+     * Returns the confidence of this match.
+     * @return 
+     */
+    public float getConfidence() {
+        return confidence;
+    }
+
+    /**
+     * Returns the image which is compared to the classifierImage
+     * @return 
+     */
+    public Mat getImage() {
+        return image;
+    }
+
+    /**
+     * Returns the image which is being compared with the original image
+     * @return 
+     */
+    public ClassifierImage getCompared() {
+        return compare;
+    }
+
 }

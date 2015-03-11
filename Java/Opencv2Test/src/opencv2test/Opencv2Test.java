@@ -17,13 +17,10 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.WindowConstants;
-import org.opencv.core.Core;
+import opencv2test.Core.ClassifierImage;
+import opencv2test.Core.Matcher;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
-import org.opencv.core.Rect;
-import org.opencv.core.Size;
-import org.opencv.core.Point;
-import org.opencv.core.Scalar;
 import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
 
@@ -49,20 +46,11 @@ public class Opencv2Test {
             System.load(new File("/opt/local/share/OpenCV/java/libopencv_java2410.dylib").getAbsolutePath());
             img = Highgui.imread("/Users/jasper/Desktop/img.jpg");
         }
-<<<<<<< HEAD
-        
         start(img);
     }
     
     public static void start(Mat img)
     {
-        
-        
-        
-        
-=======
-
->>>>>>> origin/master
         Mat grey = img.clone();
 
         // Convert de afbeelding naar grijswaarden
@@ -99,8 +87,6 @@ public class Opencv2Test {
 
             // Vind het aantal blobs en kijk of het 'noten' zijn.
             ArrayList<ArrayList<Integer>> noteList = Analyse.oneDimensionalVerticalBlobFinder(Analyse.averageCols(filteredImage));
-<<<<<<< HEAD
-=======
 
             /*
             Imgproc.cvtColor(filteredImage, filteredImage, Imgproc.);
@@ -117,7 +103,6 @@ public class Opencv2Test {
                 Core.circle(img, center, radius, new Scalar(0,0,255), 3, 8, 0);
             }
             */
->>>>>>> origin/master
             
             Analyse.drawOneDimensionalBlobsVertical(noteList, filteredImage);
 

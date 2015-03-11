@@ -1,6 +1,7 @@
 package opencv2test.Core;
 
 import java.util.ArrayList;
+import opencv2test.Support.MatchResult;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
