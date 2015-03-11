@@ -30,8 +30,10 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import opencv2test.Core.Analyse;
 import opencv2test.Support.PicturePanel;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
@@ -121,6 +123,7 @@ public class MainWindow extends javax.swing.JFrame {
         setLayout(new BorderLayout());
         
         img = Highgui.imread(chooser.getSelectedFile().getPath());
+//        img = Analyse.convertToGrey(img);
         
         Imgproc.resize(img, img, img.size());
         MatOfByte matOfByte = new MatOfByte();
@@ -139,9 +142,16 @@ public class MainWindow extends javax.swing.JFrame {
         setBounds(0,0,img.cols(), img.rows()+15);
         add(pp, BorderLayout.CENTER);
         
+        JPanel buttonbar = new JPanel(new BorderLayout());
         JButton pc = new JButton("Process");
         pc.addActionListener(processor);
-        add(pc, BorderLayout.SOUTH);
+        buttonbar.add(pc, BorderLayout.WEST);
+
+        JButton st = new JButton("Start");
+        st.addActionListener(onStart);
+        buttonbar.add(st, BorderLayout.EAST);
+
+        add(buttonbar, BorderLayout.SOUTH);
         
         repaint();
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -150,7 +160,7 @@ public class MainWindow extends javax.swing.JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             Mat img2 = new Mat(img.size(), img.type());
-            img.setTo(new Scalar(0.0, 0.0, 0.0));
+            img2.setTo(new Scalar(255.0, 255.0, 255.0));
             for (Rectangle2D r : pp.rectList)
             {
                 for (int x = (int)Math.round(r.getX()); x < (int)Math.round(r.getX()+r.getWidth()); x++)
@@ -184,12 +194,26 @@ public class MainWindow extends javax.swing.JFrame {
             pp = new PicturePanel(bufImage);
             add(pp, BorderLayout.CENTER);
 
+            JPanel buttonbar = new JPanel(new BorderLayout());
             JButton pc = new JButton("Process");
             pc.addActionListener(processor);
-            add(pc, BorderLayout.SOUTH);
+            buttonbar.add(pc, BorderLayout.WEST);
+            
+            JButton st = new JButton("Start");
+            st.addActionListener(onStart);
+            buttonbar.add(st, BorderLayout.EAST);
+            
+            add(buttonbar, BorderLayout.SOUTH);
             
             repaint();
             revalidate();
+        }
+    };
+    
+    private ActionListener onStart = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Opencv2Test.start(img);
         }
     };
     
