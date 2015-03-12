@@ -35,7 +35,7 @@ public class Opencv2Test {
 
     /**
      * @param args the command line arguments
-     */   
+     */
     public static void main(String[] args) {
         Mat img;
 
@@ -48,9 +48,8 @@ public class Opencv2Test {
         }
         start(img);
     }
-    
-    public static void start(Mat img)
-    {
+
+    public static void start(Mat img) {
         Mat grey = img.clone();
 
         // Convert de afbeelding naar grijswaarden
@@ -78,8 +77,7 @@ public class Opencv2Test {
         classifierImages.add(new ClassifierImage("#", Highgui.imread("C:\\Kees\\hashtag.jpg")));
         classifierImages.add(new ClassifierImage("achtste noot", Highgui.imread("C:\\Kees\\achtste noot.jpg")));
 
-        Matcher blobMatcher = null;
-        blobMatcher = new Matcher(classifierImages);
+        Matcher blobMatcher = new Matcher(classifierImages);
 
         for (Mat v : rois) {
 
@@ -89,21 +87,20 @@ public class Opencv2Test {
             ArrayList<ArrayList<Integer>> noteList = Analyse.oneDimensionalVerticalBlobFinder(Analyse.averageCols(filteredImage));
 
             /*
-            Imgproc.cvtColor(filteredImage, filteredImage, Imgproc.);
-            Mat circles = new Mat();
-            int minRadius = 10;
-            int maxRadius = 18;
-            Imgproc.HoughCircles(img, circles, Imgproc.CV_HOUGH_GRADIENT, 1, minRadius, 120, 10, minRadius, maxRadius);
+             Imgproc.cvtColor(filteredImage, filteredImage, Imgproc.);
+             Mat circles = new Mat();
+             int minRadius = 10;
+             int maxRadius = 18;
+             Imgproc.HoughCircles(img, circles, Imgproc.CV_HOUGH_GRADIENT, 1, minRadius, 120, 10, minRadius, maxRadius);
             
-            for(int i = 0; i < circles.cols(); i++) {
-                double[] circle = circles.get(0, i);
-                Point center = new Point((int)Math.round(circle[0]), (int)Math.round(circle[1]));
-                int radius = (int)Math.round(circle[2]);
-                Core.circle( img, center, 3, new Scalar(0,255,0), -1, 8, 0 );
-                Core.circle(img, center, radius, new Scalar(0,0,255), 3, 8, 0);
-            }
-            */
-            
+             for(int i = 0; i < circles.cols(); i++) {
+             double[] circle = circles.get(0, i);
+             Point center = new Point((int)Math.round(circle[0]), (int)Math.round(circle[1]));
+             int radius = (int)Math.round(circle[2]);
+             Core.circle( img, center, 3, new Scalar(0,255,0), -1, 8, 0 );
+             Core.circle(img, center, radius, new Scalar(0,0,255), 3, 8, 0);
+             }
+             */
             Analyse.drawOneDimensionalBlobsVertical(noteList, filteredImage);
 
             Analyse.matchBlobs(v, noteList, blobMatcher);

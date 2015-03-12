@@ -36,16 +36,7 @@ public class MatchResults {
             return null;
         }
 
-        Collections.sort(results, new Comparator<MatchResult>() {
-            @Override
-            public int compare(MatchResult m1, MatchResult m2) {
-                return (int)(m1.getConfidence() * 1000 - m2.getConfidence()* 1000);
-            }
-
-        });/*
-        for (MatchResult res : results) {
-            System.out.println("Name: " + res.getCompared().getName() + " Conf: " + res.getConfidence());
-        }*/
+        Collections.sort(results, (MatchResult m1, MatchResult m2) -> (int) (m2.getConfidence() * 1000 - m1.getConfidence() * 1000));
         return results.get(0);
     }
 

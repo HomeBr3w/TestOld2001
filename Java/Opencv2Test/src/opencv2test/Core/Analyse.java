@@ -8,7 +8,6 @@ import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
-import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
 
 public class Analyse {
@@ -221,9 +220,9 @@ public class Analyse {
             Rect roi = new Rect(blobList.get(i).get(0), 5, blobList.get(i).get(1) - blobList.get(i).get(0), img.rows() - 5);
             Mat toWrite = cropped.submat(roi);
 
-            boolean result = Highgui.imwrite("C:/Kees/" + i + ".jpg", toWrite);
-            System.out.println("Saving result: " + result);
-            System.out.println(roi.toString());
+            //boolean result = Highgui.imwrite("C:/Kees/" + i + ".jpg", toWrite);
+            //System.out.println("Saving result: " + result);
+            //System.out.println(roi.toString());
         }
     }
 
@@ -256,5 +255,44 @@ public class Analyse {
         }
 
         return rois;
+    }
+
+    
+    /**
+     * Removes whitespace from the image
+     * @param source
+     * @return 
+     */
+    public static Mat isolateImage(Mat source) {
+        int leftmost = -1;
+        int rightmost = -1;
+        int topmost = -1;
+        int botmost = -1;
+
+        //System.out.println("ROWS: " + source.rows() + " Cols: " + source.cols());
+
+        //source = Analyse.convertToGrey(source);
+        for (int y = 0; y < source.rows(); y++) {
+            for (int x = 0; x < source.cols(); x++) {
+                if (!(source.get(y, x)[0] > 0)) {
+                    if (topmost == -1 || topmost > y) {
+                        topmost = y;
+                    }
+                    if (botmost < y) {
+                        botmost = y;
+                    }
+                    if (leftmost == -1 || leftmost > x) {
+                        leftmost = x;
+                    }
+                    if (x > rightmost) {
+                        rightmost = x;
+                    }
+                }
+            }
+        }
+        System.out.println("Bounds: { L:" + leftmost + ", T:" + topmost + ", R:" + rightmost + ", B:" + botmost + " } [0,1,2,3]");
+        Rect roi = new Rect(leftmost, topmost, rightmost - leftmost, botmost - topmost);
+        Mat result = source.submat(roi);
+        return result;
     }
 }
