@@ -123,7 +123,7 @@ public class MainWindow extends javax.swing.JFrame {
         setLayout(new BorderLayout());
         
         img = Highgui.imread(chooser.getSelectedFile().getPath());
-//        img = Analyse.convertToGrey(img);
+ //        img = Analyse.convertToGrey(img);
         
         Imgproc.resize(img, img, img.size());
         MatOfByte matOfByte = new MatOfByte();
