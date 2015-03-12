@@ -43,11 +43,13 @@ public class DebugClass {
             showResult(i.getImage());
         }
 
-        Mat compareWith = Highgui.imread("C:\\Kees\\10.jpg");
-        Matcher matcher = new Matcher(classifierImages);
-        MatchResult result = matcher.matchImage(compareWith);
-        System.out.println("Result: " + result.getCompared().getName() + " Confidence: " + result.getConfidence());
-        showResult(compareWith);
+        for (int i = 0; i < 20; i++) {
+            Mat compareWith = Highgui.imread("C:\\Kees\\" + i + ".jpg");
+            Matcher matcher = new Matcher(classifierImages);
+            MatchResult result = matcher.matchImage(compareWith);
+            System.out.println("Result: " + result.getCompared().getName() + " Confidence: " + result.getConfidence());
+            //showResult(compareWith);
+        }
     }
 
 }

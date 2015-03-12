@@ -257,11 +257,11 @@ public class Analyse {
         return rois;
     }
 
-    
     /**
      * Removes whitespace from the image
+     *
      * @param source
-     * @return 
+     * @return
      */
     public static Mat isolateImage(Mat source) {
         int leftmost = -1;
@@ -270,7 +270,6 @@ public class Analyse {
         int botmost = -1;
 
         //System.out.println("ROWS: " + source.rows() + " Cols: " + source.cols());
-
         //source = Analyse.convertToGrey(source);
         for (int y = 0; y < source.rows(); y++) {
             for (int x = 0; x < source.cols(); x++) {
@@ -295,4 +294,22 @@ public class Analyse {
         Mat result = source.submat(roi);
         return result;
     }
+
+    public static float getBlackPercentage(Mat image) {
+        float countBlack = 0;
+        float totalPixels = image.cols() * image.rows();
+        for (int r = 0; r < image.rows(); r++) {
+            for (int c = 0; c < image.cols(); c++) {
+                if (image.get(r, c)[0] < 127.0) {
+                    countBlack++;
+                }
+            }
+        }
+        return (countBlack / totalPixels) * 100.0f;
+    }
+
+    public static float getHeightWidthRatio(Mat image) {
+        return (float) image.cols() / (float) image.rows();
+    }
+
 }

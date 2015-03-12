@@ -18,7 +18,7 @@ public class MidiInterface {
      */
     public static void main(String[] args) throws Exception {
 
-        MidiSequence sequence = new MidiSequence(100);
+        MidiSequence sequence = new MidiSequence(72);
         MidiTrack tr = sequence.createTrack("miditrack 1");
         MidiTrack tr2 = sequence.createTrack("miditrack 2");
 
