@@ -70,10 +70,16 @@ public class Main extends javax.swing.JFrame {
         bg1.setBackground(active);
         repaint();
         revalidate();
+        pbar.setValue(00);
     }
     
+    private JFrame window;
     private void goto2()
     {
+        if (window2 != null && window2.isVisible())
+        {
+            window2.setVisible(false);
+        }
         disableAll();
         back21.setEnabled(true);
         go23.setEnabled(true);
@@ -93,7 +99,7 @@ public class Main extends javax.swing.JFrame {
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        JFrame window = new JFrame("Draw a line on the first track. Try to match the line perfectly!");
+        window = new JFrame("Draw a line on the first track. Try to match the line perfectly!");
         window.setBounds(500, 0, img.cols(), img.rows());
         
         DrawLineState panel = new DrawLineState(bufImage);
@@ -101,16 +107,23 @@ public class Main extends javax.swing.JFrame {
         window.add(panel);
         window.setDefaultCloseOperation(EXIT_ON_CLOSE);
         window.setVisible(true);
+        pbar.setValue(15);
     }
     
+    private JFrame window2;
     private void goto3()
     {
+        if (window != null && window.isVisible())
+        {
+            window.setVisible(false);
+        }
         disableAll();
         back22.setEnabled(true);
         go24.setEnabled(true);
         bg3.setBackground(active);
         repaint();
         revalidate();
+        pbar.setValue(30);
     }
     
     private void goto4()
@@ -122,6 +135,7 @@ public class Main extends javax.swing.JFrame {
         bg4.setBackground(active);
         repaint();
         revalidate();
+        pbar.setValue(45);
     }
 
     private Mat img;
