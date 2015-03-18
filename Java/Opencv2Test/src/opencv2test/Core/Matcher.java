@@ -46,12 +46,9 @@ public class Matcher {
     }
 
     private MatchResult compareImage(ClassifierImage ci, Mat image) {
-        float rows = ci.getImage().rows();
-        float columns = ci.getImage().cols();
-        
         ClassifierImage source = new ClassifierImage("sourceimg", image);
         float conf = 100.0f - ci.compare(source);
-        return new MatchResult(conf, ci, image);
+        return new MatchResult(conf, ci, source.getImage());
     }
 
     public void addImage(String imageName, Mat image) {
@@ -60,5 +57,10 @@ public class Matcher {
 
     public boolean removeImage(ClassifierImage image) {
         return images.remove(image);
+    }
+    
+    public ArrayList<MatchResult> getAllResults()
+    {
+        return matchResults.getResults();
     }
 }

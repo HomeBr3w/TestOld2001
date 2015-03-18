@@ -289,23 +289,73 @@ public class Analyse {
                 }
             }
         }
-        System.out.println("Bounds: { L:" + leftmost + ", T:" + topmost + ", R:" + rightmost + ", B:" + botmost + " } [0,1,2,3]");
+        //System.out.println("Bounds: { L:" + leftmost + ", T:" + topmost + ", R:" + rightmost + ", B:" + botmost + " }");
         Rect roi = new Rect(leftmost, topmost, rightmost - leftmost, botmost - topmost);
         Mat result = source.submat(roi);
         return result;
     }
 
-    public static float getBlackPercentage(Mat image) {
+    public static ArrayList<Float> getBlackPercentage(Mat image) {
+
+        ArrayList<Float> blackPercentage = new ArrayList<>();
         float countBlack = 0;
-        float totalPixels = image.cols() * image.rows();
-        for (int r = 0; r < image.rows(); r++) {
+        float totalPixels = image.cols() * (image.rows() / 2);
+        int r = 0;
+        for (r = r; r < image.rows() / 2; r++) {
             for (int c = 0; c < image.cols(); c++) {
                 if (image.get(r, c)[0] < 127.0) {
                     countBlack++;
                 }
             }
         }
-        return (countBlack / totalPixels) * 100.0f;
+        blackPercentage.add((countBlack / totalPixels) * 100.0f);
+        countBlack = 0;
+        totalPixels = image.cols() * (image.rows() - (image.rows() / 2));
+        for (r = r; r < image.rows(); r++) {
+            for (int c = 0; c < image.cols(); c++) {
+                if (image.get(r, c)[0] < 127.0) {
+                    countBlack++;
+                }
+            }
+        }
+        blackPercentage.add((countBlack / totalPixels) * 100.0f);
+        countBlack = 0;
+        totalPixels = image.cols() * image.rows();
+        for (r = 0; r < image.rows(); r++) {
+            for (int c = 0; c < image.cols(); c++) {
+                if (image.get(r, c)[0] < 127.0) {
+                    countBlack++;
+                }
+            }
+        }
+        blackPercentage.add((countBlack / totalPixels) * 100.0f);
+        return blackPercentage;
+    }
+    
+    public static Mat deleteWhiteRows (Mat src) {
+        Mat dst = src.clone();
+        int rindex = 0;
+        for (int r = 0; r < src.rows(); r++)
+        {
+            boolean count = false;
+            for (int c = 0; c < src.cols(); c++)
+            {
+                if (src.get(r, c)[0] < 127)
+                {
+                    count = true;
+                    break;
+                }
+            }
+            if (count)
+            {
+                for (int c = 0; c < src.cols(); c++)
+                {
+                    dst.put(rindex, c, src.get(r, c));
+                }
+                rindex++;
+            }
+        }
+        return dst.submat(new Rect(0, 0, dst.cols(), rindex));
     }
 
     public static float getHeightWidthRatio(Mat image) {

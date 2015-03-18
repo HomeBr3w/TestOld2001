@@ -7,7 +7,6 @@ package opencv2test.Support;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 
 /**
  *
@@ -55,5 +54,9 @@ public class MatchResults {
     public void clear() {
         results.clear();
     }
-
+    
+    public ArrayList<MatchResult> getResults()
+    {
+        return results;
+    }
 }
