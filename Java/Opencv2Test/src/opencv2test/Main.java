@@ -18,10 +18,14 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JSlider;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import opencv2test.Core.Analyse;
+import opencv2test.Support.DrawLineClass;
 import opencv2test.Support.DrawLineState;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
+import org.opencv.core.Rect;
 import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
 
@@ -60,6 +64,16 @@ public class Main extends javax.swing.JFrame {
         savemidi.setEnabled(false);
         savemp3.setEnabled(false);
         bg4.setBackground(nonactive);
+        
+        if (window != null && window.isVisible())
+        {
+            window.setVisible(false);
+        }
+        
+        if (window2 != null && window2.isVisible())
+        {
+            window2.setVisible(false);
+        }
     }
     
     private void goto1()
@@ -73,13 +87,9 @@ public class Main extends javax.swing.JFrame {
         pbar.setValue(00);
     }
     
-    private JFrame window;
+    private DrawLineClass window;
     private void goto2()
     {
-        if (window2 != null && window2.isVisible())
-        {
-            window2.setVisible(false);
-        }
         disableAll();
         back21.setEnabled(true);
         go23.setEnabled(true);
@@ -99,24 +109,30 @@ public class Main extends javax.swing.JFrame {
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        window = new JFrame("Draw a line on the first track. Try to match the line perfectly!");
+        window = new DrawLineClass("Draw a line on the first track. Try to match the line perfectly!");
+        window.setLayout(new BorderLayout());
         window.setBounds(500, 0, img.cols(), img.rows());
+        window.dlstate = new DrawLineState(bufImage);
+        window.add(window.dlstate, BorderLayout.CENTER);
         
-        DrawLineState panel = new DrawLineState(bufImage);
+        window.dlstate.jslide = new JSlider(-1000, 1000, 0);
+        window.dlstate.jslide.addChangeListener(window.dlstate.slistner);
+        window.add(window.dlstate.jslide, BorderLayout.SOUTH);
         
-        window.add(panel);
         window.setDefaultCloseOperation(EXIT_ON_CLOSE);
         window.setVisible(true);
+        
         pbar.setValue(15);
     }
     
     private JFrame window2;
     private void goto3()
     {
-        if (window != null && window.isVisible())
-        {
-            window.setVisible(false);
-        }
+        //System.out.println("Rotate " + (double)window.dlstate.rotation);
+        int w = img.cols();
+        int h = img.rows();
+        Analyse.rotate(img, (double)window.dlstate.rotation, img);
+        img = img.submat(new Rect(0,0, w, h));
         disableAll();
         back22.setEnabled(true);
         go24.setEnabled(true);
@@ -412,7 +428,9 @@ public class Main extends javax.swing.JFrame {
         
         if (img.rows() * img.cols() < 480000)
         {
+            pathfound.setText("Image is too small!");
             bg1.setBackground(error);
+            
         }
         else
         {
@@ -442,7 +460,12 @@ public class Main extends javax.swing.JFrame {
     }//GEN-LAST:event_go24ActionPerformed
 
     private void saveimgActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveimgActionPerformed
-        // TODO add your handling code here:
+        JFileChooser fc = new JFileChooser();
+        if(fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
+        {
+            File f = fc.getSelectedFile();
+            Highgui.imwrite(f.getAbsolutePath(), img);
+        }        
     }//GEN-LAST:event_saveimgActionPerformed
 
     private void savemp3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_savemp3ActionPerformed

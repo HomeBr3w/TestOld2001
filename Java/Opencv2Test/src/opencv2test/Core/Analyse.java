@@ -1,6 +1,8 @@
 package opencv2test.Core;
 
 import java.util.ArrayList;
+import javax.vecmath.Point2d;
+import javax.vecmath.Point2f;
 import opencv2test.Support.MatchResult;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -307,9 +309,32 @@ public class Analyse {
         }
         return (countBlack / totalPixels) * 100.0f;
     }
+    
+    public static void rotate(Mat src, double angle, Mat dst)
+    {
+        int len = Math.max(src.cols(), src.rows());
+        Point pt = new Point (len/2.0, len/2.0);
+        Mat r = Imgproc.getRotationMatrix2D (pt, angle, 1.0);
+
+        Imgproc.warpAffine (src, dst, r, new Size(len, len));
+    }
 
     public static float getHeightWidthRatio(Mat image) {
         return (float) image.cols() / (float) image.rows();
     }
 
+    public static double calcRotationAngleInDegrees(Point centerPt, Point targetPt)
+    {
+        double theta = Math.atan2(targetPt.y - centerPt.y, targetPt.x - centerPt.x);
+
+        theta += Math.PI/2.0;
+
+        double angle = Math.toDegrees(theta);  
+        
+        if (angle < 0) {
+            angle += 360;
+        }
+
+        return angle;
+    }
 }
