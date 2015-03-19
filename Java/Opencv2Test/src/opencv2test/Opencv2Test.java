@@ -68,17 +68,6 @@ public class Opencv2Test {
         //Uitsnedes maken van notenbalken en het kwardratische verticalegemiddelde berekenen per balk
         ArrayList<Mat> rois = Analyse.getROIperBlob(blobList, img);
 
-        //Setup classifier & matcher
-        ArrayList<ClassifierImage> classifierImages = new ArrayList<>();
-        classifierImages.add(new ClassifierImage("sleutel", Highgui.imread("C:\\Kees\\sleutel.jpg")));
-        classifierImages.add(new ClassifierImage("kwartnoot", Highgui.imread("C:\\Kees\\kwartnoot.jpg")));
-        classifierImages.add(new ClassifierImage("halvenoot", Highgui.imread("C:\\Kees\\halve noot.jpg")));
-        classifierImages.add(new ClassifierImage("hele noot", Highgui.imread("C:\\Kees\\hele noot.jpg")));
-        classifierImages.add(new ClassifierImage("#", Highgui.imread("C:\\Kees\\hashtag.jpg")));
-        classifierImages.add(new ClassifierImage("achtste noot", Highgui.imread("C:\\Kees\\achtste noot.jpg")));
-
-        Matcher blobMatcher = new Matcher(classifierImages);
-
         for (Mat v : rois) {
 
             Mat filteredImage = Analyse.filterDifference(v, Analyse.averageRows(v));
@@ -103,7 +92,7 @@ public class Opencv2Test {
              */
             Analyse.drawOneDimensionalBlobsVertical(noteList, filteredImage);
 
-            Analyse.matchBlobs(v, noteList, blobMatcher);
+            //Analyse.matchBlobs(v, noteList, blobMatcher);
 
             showResult(filteredImage);
         }
