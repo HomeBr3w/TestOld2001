@@ -34,7 +34,7 @@ import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import opencv2test.Core.Analyse;
-import opencv2test.Support.PicturePanel;
+import opencv2test.Support.DrawBoxClass;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
 import org.opencv.core.Scalar;
@@ -103,7 +103,7 @@ public class MainWindow extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private PicturePanel pp;
+    private DrawBoxClass pp;
     private Mat img;
     
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -137,21 +137,21 @@ public class MainWindow extends javax.swing.JFrame {
             e.printStackTrace();
         }
         
-        pp = new PicturePanel(bufImage);
-        
-        setBounds(0,0,img.cols(), img.rows()+15);
-        add(pp, BorderLayout.CENTER);
-        
-        JPanel buttonbar = new JPanel(new BorderLayout());
-        JButton pc = new JButton("Process");
-        pc.addActionListener(processor);
-        buttonbar.add(pc, BorderLayout.WEST);
+    pp = new DrawBoxClass(bufImage);
 
-        JButton st = new JButton("Start");
-        st.addActionListener(onStart);
-        buttonbar.add(st, BorderLayout.EAST);
+    setBounds(0,0,img.cols(), img.rows()+15);
+    add(pp, BorderLayout.CENTER);
 
-        add(buttonbar, BorderLayout.SOUTH);
+    JPanel buttonbar = new JPanel(new BorderLayout());
+    JButton pc = new JButton("Process");
+    pc.addActionListener(processor);
+    buttonbar.add(pc, BorderLayout.WEST);
+
+    JButton st = new JButton("Start");
+    st.addActionListener(onStart);
+    buttonbar.add(st, BorderLayout.EAST);
+
+    add(buttonbar, BorderLayout.SOUTH);
         
         repaint();
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -191,7 +191,7 @@ public class MainWindow extends javax.swing.JFrame {
                 Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
             }
             
-            pp = new PicturePanel(bufImage);
+            pp = new DrawBoxClass(bufImage);
             add(pp, BorderLayout.CENTER);
 
             JPanel buttonbar = new JPanel(new BorderLayout());

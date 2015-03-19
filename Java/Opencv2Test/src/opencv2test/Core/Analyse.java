@@ -1,15 +1,25 @@
 package opencv2test.Core;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.vecmath.Point2d;
 import javax.vecmath.Point2f;
+import opencv2test.MainWindow;
 import opencv2test.Support.MatchResult;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfByte;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
+import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
 
 public class Analyse {
@@ -386,5 +396,22 @@ public class Analyse {
         }
 
         return angle;
+    }
+    
+    public static BufferedImage getBufferedImgFromMat (Mat img)
+    {
+        MatOfByte matOfByte = new MatOfByte();
+        Highgui.imencode(".jpg", img, matOfByte);
+        byte[] byteArray = matOfByte.toArray();
+        BufferedImage bufImage = null;
+
+        InputStream in = new ByteArrayInputStream(byteArray);
+        try {
+            bufImage = ImageIO.read(in);
+        } catch (IOException ex) {
+            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return bufImage;
     }
 }

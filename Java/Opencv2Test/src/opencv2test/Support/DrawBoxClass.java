@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 import javax.swing.JPanel;
 import org.opencv.core.Mat;
 
-public class PicturePanel extends JPanel {
+public class DrawBoxClass extends JPanel {
 
     private BufferedImage img;
     private boolean has2draw = false;
@@ -27,7 +27,7 @@ public class PicturePanel extends JPanel {
     private double currentX, currentY, startX, startY;
     public ArrayList<Rectangle2D> rectList = new ArrayList<>();
 
-    public PicturePanel(BufferedImage img) {
+    public DrawBoxClass(BufferedImage img) {
         this.img = img;
         
         addMouseListener(new MouseAdapter() {
@@ -52,7 +52,7 @@ public class PicturePanel extends JPanel {
 
                                             Thread.sleep(1);
                                             } catch (InterruptedException ex) {
-                                                Logger.getLogger(PicturePanel.class.getName()).log(Level.SEVERE, null, ex);
+                                                Logger.getLogger(DrawBoxClass.class.getName()).log(Level.SEVERE, null, ex);
                                             }
                                         }
                                         rectList.remove(r);

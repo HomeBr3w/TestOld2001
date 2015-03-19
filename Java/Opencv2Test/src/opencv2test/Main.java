@@ -9,22 +9,16 @@ import com.sun.javafx.Utils;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JSlider;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import opencv2test.Core.Analyse;
+import opencv2test.Support.DrawBoxClass;
+import opencv2test.Support.DrawBoxState;
 import opencv2test.Support.DrawLineClass;
 import opencv2test.Support.DrawLineState;
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfByte;
 import org.opencv.core.Rect;
 import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
@@ -72,6 +66,7 @@ public class Main extends javax.swing.JFrame {
         
         if (window2 != null && window2.isVisible())
         {
+            img = window2.img;
             window2.setVisible(false);
         }
     }
@@ -97,17 +92,7 @@ public class Main extends javax.swing.JFrame {
         repaint();
         revalidate();
         
-        MatOfByte matOfByte = new MatOfByte();
-        Highgui.imencode(".jpg", img, matOfByte);
-        byte[] byteArray = matOfByte.toArray();
-        BufferedImage bufImage = null;
-
-        InputStream in = new ByteArrayInputStream(byteArray);
-        try {
-            bufImage = ImageIO.read(in);
-        } catch (IOException ex) {
-            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        BufferedImage bufImage = Analyse.getBufferedImgFromMat(img);
 
         window = new DrawLineClass("Draw a line on the first track. Try to match the line perfectly!");
         window.setLayout(new BorderLayout());
@@ -125,15 +110,25 @@ public class Main extends javax.swing.JFrame {
         pbar.setValue(15);
     }
     
-    private JFrame window2;
+    private DrawBoxState window2;
     private void goto3()
     {
-        //System.out.println("Rotate " + (double)window.dlstate.rotation);
+        disableAll();
+        
         int w = img.cols();
         int h = img.rows();
         Analyse.rotate(img, (double)window.dlstate.rotation, img);
         img = img.submat(new Rect(0,0, w, h));
-        disableAll();
+        
+        window2 = new DrawBoxState("Mark the area's to keep. Left click-drag to mark. Right click to remove.");
+        window2.img = img;
+        window2.setBounds(500,0,img.cols(), img.rows()+15);
+        window2.setVisible(true);
+        
+        BufferedImage bufImage = Analyse.getBufferedImgFromMat(img);
+        window2.pp = new DrawBoxClass(bufImage);
+        window2.add(window2.pp, BorderLayout.CENTER);
+        
         back22.setEnabled(true);
         go24.setEnabled(true);
         bg3.setBackground(active);
