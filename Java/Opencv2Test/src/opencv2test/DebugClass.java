@@ -76,18 +76,20 @@ public class DebugClass {
         MidiSequence midiSeq = new MidiSequence(72);
         MidiTrack track = midiSeq.createTrack("track nummer 1");
         int channel = 0;
-        int counter = 0;
+        int timer = 0;
 
         for (int i = 0; i < 21; i++) {
             Mat compareWith = Highgui.imread("C:\\Kees\\" + i + ".jpg");
             Matcher matcher = new Matcher(classifierImages);
             MatchResult result = matcher.matchImage(compareWith);
 
-            System.out.println(i + ") Result: " + result.getCompared().getName() + " Confidence: " + result.getConfidence() + " <- " + refList[i]);
+            //System.out.println(i + ") Result: " + result.getCompared().getName() + " Confidence: " + result.getConfidence() + " <- " + refList[i]);
             if (result.getCompared().getDuration() != -1) {
-                int duration = (int)(result.getCompared().getDuration() * 100);
-                track.addNote(channel, new Note(60, 70, counter, duration));
-                counter += duration;
+                float noteDuration = result.getCompared().getDuration();
+                int duration = (int) (noteDuration * 100);
+                track.addNote(channel, new Note(64, 100, timer, duration));
+                System.out.println("Result: " + result.getCompared().getName() + " Confidence: " + result.getConfidence() + " Adding note: Type: 64, Pitch 100, Duration: " + duration + " at tick nr. " + timer);
+                timer += duration;
             }
         }
         midiSeq.writeToFile("testBV");
