@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import javax.naming.OperationNotSupportedException;
 import opencv2test.MainWindow;
 import opencv2test.Support.MatchResult;
 import org.opencv.core.Core;
@@ -300,7 +301,7 @@ public class Analyse {
             }
         }
         //System.out.println("Bounds: { L:" + leftmost + ", T:" + topmost + ", R:" + rightmost + ", B:" + botmost + " }");
-        Rect roi = new Rect(leftmost, topmost, rightmost - leftmost, botmost - topmost);
+        Rect roi = new Rect(leftmost, topmost, rightmost - leftmost + 1, botmost - topmost + 1);
         Mat result = source.submat(roi);
         return result;
     }
@@ -411,5 +412,72 @@ public class Analyse {
         }
         
         return bufImage;
+    }
+    
+    public static String encryptImage (Mat img, boolean print)
+    {
+        int icount = 0;
+        int ocount = 0;
+        String buffer = "";
+        for (int r = 0; r < img.rows(); r++) {
+            for (int c = 0; c < img.cols(); c++) {
+                if (img.get(r, c)[0] < 127) {
+                    if (icount > 0) {
+                        if (icount == 1) {
+                            buffer += "|";
+                        } else {
+                            buffer += icount + "|";
+                        }
+                        icount = 0;
+                    }
+                    ocount++;
+                } else {
+                    if (ocount > 0) {
+                        if (ocount == 1) {
+                            buffer += ".";
+                        } else {
+                            buffer += ocount + ".";
+                        }
+                        ocount = 0;
+                    }
+                    icount++;
+                }
+            }
+            if (icount > 0) {
+                if (icount == 1) {
+                    buffer += "|";
+                } else {
+                    buffer += icount + "|";
+                }
+            }
+            if (ocount > 0) {
+                if (ocount == 1) {
+                    buffer += ".";
+                } else {
+                    buffer += ocount + ".";
+                }
+            }
+            ocount = 0;
+            icount = 0;
+            buffer += "-";
+        }
+        if (print)
+        {
+            for (int i = 1; i < buffer.length()+1; i++) {
+                System.out.print(buffer.charAt(i-1));
+                if (i % 60 == 0) {
+                    System.out.println();
+                }
+            }
+            System.out.println();
+        }
+        return buffer;
+    }
+    
+    public static Mat decryptImage (String buffer)
+    {
+        Mat img = null;
+        
+        return img;
     }
 }
