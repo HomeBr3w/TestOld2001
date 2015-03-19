@@ -11,8 +11,10 @@ import java.util.ArrayList;
 import opencv2test.Core.Analyse;
 import opencv2test.Core.ClassifierImage;
 import opencv2test.Core.Matcher;
-import static opencv2test.Opencv2Test.showResult;
+import opencv2test.Core.MidiSequence;
 import opencv2test.Support.MatchResult;
+import opencv2test.Support.MidiTrack;
+import opencv2test.Support.Note;
 import org.opencv.core.Mat;
 import org.opencv.highgui.Highgui;
 
@@ -33,16 +35,16 @@ public class DebugClass {
         }
         //Setup classifier & matcher
         ArrayList<ClassifierImage> classifierImages = new ArrayList<>();
-        classifierImages.add(new ClassifierImage("sleutel", Highgui.imread("C:\\Kees\\sleutel.jpg")));
-        classifierImages.add(new ClassifierImage("kwartnoot", Highgui.imread("C:\\Kees\\kwartnoot.jpg")));
-        classifierImages.add(new ClassifierImage("halvenoot", Highgui.imread("C:\\Kees\\halve noot.jpg")));
-        classifierImages.add(new ClassifierImage("hele noot", Highgui.imread("C:\\Kees\\hele noot.jpg")));
-        classifierImages.add(new ClassifierImage("#", Highgui.imread("C:\\Kees\\#.jpg")));
-        classifierImages.add(new ClassifierImage("achtste noot", Highgui.imread("C:\\Kees\\achtste noot.jpg")));
-        classifierImages.add(new ClassifierImage("maatstreep", Highgui.imread("C:\\Kees\\maatstreep.jpg")));
-        classifierImages.add(new ClassifierImage("tempoding", Highgui.imread("C:\\Kees\\tempoding.jpg")));
-        classifierImages.add(new ClassifierImage("halfopdekop", Highgui.imread("C:\\Kees\\halfopdekop.jpg")));
-        classifierImages.add(new ClassifierImage("hele met vermate", Highgui.imread("C:\\Kees\\vermate.jpg")));
+        classifierImages.add(new ClassifierImage("sleutel", Highgui.imread("C:\\Kees\\sleutel.jpg"), -1f));
+        classifierImages.add(new ClassifierImage("kwartnoot", Highgui.imread("C:\\Kees\\kwartnoot.jpg"), 1f));
+        classifierImages.add(new ClassifierImage("halvenoot", Highgui.imread("C:\\Kees\\halve noot.jpg"), 2f));
+        classifierImages.add(new ClassifierImage("hele noot", Highgui.imread("C:\\Kees\\hele noot.jpg"), 4f));
+        classifierImages.add(new ClassifierImage("#", Highgui.imread("C:\\Kees\\#.jpg"), -1f));
+        classifierImages.add(new ClassifierImage("achtste noot", Highgui.imread("C:\\Kees\\achtste noot.jpg"), 0.5f));
+        classifierImages.add(new ClassifierImage("maatstreep", Highgui.imread("C:\\Kees\\maatstreep.jpg"), -1f));
+        classifierImages.add(new ClassifierImage("tempoding", Highgui.imread("C:\\Kees\\tempoding.jpg"), -1f));
+        classifierImages.add(new ClassifierImage("halfopdekop", Highgui.imread("C:\\Kees\\halfopdekop.jpg"), 2f));
+        classifierImages.add(new ClassifierImage("hele met vermate", Highgui.imread("C:\\Kees\\vermate.jpg"), 4f));
         /*
          for (ClassifierImage i : classifierImages) {
          showResult(i.getImage());
@@ -71,27 +73,24 @@ public class DebugClass {
             "hele met vermate",
             "|"
         };
-        
+        MidiSequence midiSeq = new MidiSequence(72);
+        MidiTrack track = midiSeq.createTrack("track nummer 1");
+        int channel = 0;
+        int counter = 0;
+
         for (int i = 0; i < 21; i++) {
             Mat compareWith = Highgui.imread("C:\\Kees\\" + i + ".jpg");
             Matcher matcher = new Matcher(classifierImages);
             MatchResult result = matcher.matchImage(compareWith);
-            
-            ArrayList<Float> res = Analyse.getBlackPercentage(result.getImage());
-            ArrayList<Float> res1 = Analyse.getBlackPercentage(result.getCompared().getImage());
-            System.out.println(i + ") Result: " + result.getCompared().getName() + " Confidence: " + result.getConfidence() + " <- " + refList[i]); 
-            /*if (result.getConfidence() < 100) {
-                showResult(result.getImage());
-                showResult(result.getCompared().getImage());
-                System.out.println(i + " Result: " + result.getCompared().getName() + " Confidence: " + result.getConfidence());
-            }*/
-            /*
-             for(MatchResult m : matcher.getAllResults())
-             {
-             System.out.println("Image: " + i + " Compared with: " + m.getCompared().getName() + " Conf:" + m.getConfidence());
-             }*/
-            //showResult(compareWith);
+
+            System.out.println(i + ") Result: " + result.getCompared().getName() + " Confidence: " + result.getConfidence() + " <- " + refList[i]);
+            if (result.getCompared().getDuration() != -1) {
+                int duration = (int)(result.getCompared().getDuration() * 100);
+                track.addNote(channel, new Note(60, 70, counter, duration));
+                counter += duration;
+            }
         }
+        midiSeq.writeToFile("testBV");
     }
 
 }

@@ -46,13 +46,13 @@ public class Matcher {
     }
 
     private MatchResult compareImage(ClassifierImage ci, Mat image) {
-        ClassifierImage source = new ClassifierImage("sourceimg", image);
+        ClassifierImage source = new ClassifierImage("sourceimg", image, -1);
         float conf = 100.0f - ci.compare(source);
         return new MatchResult(conf, ci, source.getImage());
     }
 
-    public void addImage(String imageName, Mat image) {
-        images.add(new ClassifierImage(imageName, image));
+    public void addImage(String imageName, Mat image, int noteDuration) {
+        images.add(new ClassifierImage(imageName, image, noteDuration));
     }
 
     public boolean removeImage(ClassifierImage image) {

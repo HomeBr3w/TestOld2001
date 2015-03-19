@@ -20,6 +20,7 @@ public class ClassifierImage {
     private final float topDownRatio;
     //private final float leftRightRatio;
     private final ArrayList<Float> blackPercentage;
+    private final float noteDuration;
     private final float MARGIN = 10.0f;
 
     /**
@@ -28,12 +29,13 @@ public class ClassifierImage {
      * @param name
      * @param image
      */
-    public ClassifierImage(String name, Mat image) {
+    public ClassifierImage(String name, Mat image, float noteDuration) {
         this.imageName = name;
         this.image = Analyse.isolateImage(Analyse.deleteWhiteRows(image));
         this.heightWidthRatio = (float) image.cols() / (float) image.rows();
         this.blackPercentage = Analyse.getBlackPercentage(this.image);
         this.topDownRatio = blackPercentage.get(0) / blackPercentage.get(1);
+        this.noteDuration = noteDuration;
     }
 
     /**
@@ -62,9 +64,8 @@ public class ClassifierImage {
     public ArrayList<Float> getBlackPercentage() {
         return blackPercentage;
     }
-    
-    public float getTopDownRatio()
-    {
+
+    public float getTopDownRatio() {
         return topDownRatio;
     }
 
@@ -97,14 +98,17 @@ public class ClassifierImage {
         if (diffArea > 0.005f) {
             error += incrementError;
         }
-        
+
         float diffTopDownRatio = Math.abs(toCompare.getTopDownRatio() - topDownRatio);
-        if(diffTopDownRatio > 0.01f)
-        {
+        if (diffTopDownRatio > 0.01f) {
             error += incrementError;
         }
         //System.out.println("VVD DING: " + toCompare.getBlackPercentage().get(0) + " " + toCompare.getBlackPercentage().get(1));
         //System.out.println("ORIG: " + blackPercentage.get(0) + " " + blackPercentage.get(1));
         return error;
+    }
+
+    public float getDuration() {
+        return noteDuration;
     }
 }
