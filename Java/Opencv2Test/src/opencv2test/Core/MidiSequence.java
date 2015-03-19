@@ -3,13 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package opencv2test.Support;
+package opencv2test.Core;
 
 import java.io.File;
 import java.util.ArrayList;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequence;
+import opencv2test.Support.MidiTrack;
 
 /**
  *

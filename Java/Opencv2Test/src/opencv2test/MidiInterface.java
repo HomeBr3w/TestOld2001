@@ -5,7 +5,7 @@
  */
 package opencv2test;
 
-import opencv2test.Support.MidiSequence;
+import opencv2test.Core.MidiSequence;
 import opencv2test.Support.MidiTrack;
 import opencv2test.Support.Note;
 
