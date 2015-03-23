@@ -11,7 +11,7 @@ import javax.swing.JProgressBar;
 public interface RmiServerIntf extends Remote
 {
     public static final int RMI_REGISTER_ID = 1099;
-    public static final String RMI_LOCATION = "//localhost/RmiServer";
+    public static final String RMI_LOCATION = "//192.168.0.27/RmiServer";
     
     public BufferedImage Rotate (BufferedImage Source, int Degrees) throws RemoteException;
     public BufferedImage RemoveButSelected (BufferedImage Source, ArrayList<Rectangle2D> KeepList) throws RemoteException;
