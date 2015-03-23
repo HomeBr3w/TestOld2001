@@ -1,6 +1,7 @@
 package opencv2test.Core;
 
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -406,6 +407,16 @@ public class Analyse {
 
         return bufImage;
     }
+   
+    public static Mat getMatFromBufferedImage (BufferedImage bi)
+    {
+        Mat im = new Mat(bi.getHeight(), bi.getWidth(), 7);
+        byte[] pixels = ((DataBufferByte) bi.getRaster().getDataBuffer()).getData();
+        im.put(0, 0, pixels);
+        
+        return im;
+    }
+    
 
     public static String encryptImage(Mat img, boolean print) {
         int icount = 0;
