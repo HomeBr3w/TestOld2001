@@ -1,6 +1,7 @@
 package opencv2test.Core;
 
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,7 +9,6 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import javax.naming.OperationNotSupportedException;
 import opencv2test.MainWindow;
 import opencv2test.Support.MatchResult;
 import org.opencv.core.Core;
@@ -412,6 +412,15 @@ public class Analyse {
         }
         
         return bufImage;
+    }
+    
+    public static Mat getMatFromBufferedImage (BufferedImage bi)
+    {
+        Mat im = new Mat(bi.getHeight(), bi.getWidth(), 7);
+        byte[] pixels = ((DataBufferByte) bi.getRaster().getDataBuffer()).getData();
+        im.put(0, 0, pixels);
+        
+        return im;
     }
     
     public static String encryptImage (Mat img, boolean print)
