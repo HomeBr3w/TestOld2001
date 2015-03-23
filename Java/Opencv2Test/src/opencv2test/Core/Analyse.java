@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import javax.naming.OperationNotSupportedException;
 import opencv2test.MainWindow;
+import opencv2test.Opencv2Test;
 import opencv2test.Support.MatchResult;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -243,7 +243,8 @@ public class Analyse {
             Rect roi = new Rect(noteList.get(i).get(0), 5, noteList.get(i).get(1) - noteList.get(i).get(0), noteBar.rows() - 5);
             cropped = cropped.submat(roi);
             MatchResult result = blobMatcher.matchImage(cropped);
-            System.out.println("Result: " + result.getCompared().getName() + " Confidence: " + result.getConfidence());
+            //Opencv2Test.showResult(cropped);
+            System.out.println(i + ") Result: " + result.getCompared().getName() + " Confidence: " + result.getConfidence());
         }
     }
 
@@ -410,6 +411,7 @@ public class Analyse {
         int icount = 0;
         int ocount = 0;
         String buffer = "";
+        buffer += img.type() + "#";
         for (int r = 0; r < img.rows(); r++) {
             for (int c = 0; c < img.cols(); c++) {
                 if (img.get(r, c)[0] < 127) {
@@ -465,10 +467,10 @@ public class Analyse {
     }
 
     public static Mat decryptImage(String buffer) {
-        Mat img = null;
-        String[] lines = buffer.split("-");
+        String[] imgSplit = buffer.split("#");
+        int type = Integer.parseInt(imgSplit[0]);
+        String[] lines = imgSplit[1].split("-");
         ArrayList<ArrayList<Integer>> totalRows = new ArrayList<>();
-        int counter = 0;
         for (String s : lines) {
             String cached = "";
             ArrayList<Integer> row = new ArrayList<>();
@@ -478,7 +480,7 @@ public class Analyse {
                     try {
                         count = Integer.parseInt(cached);
                     } catch (Exception ex) {
-                        System.out.println("Incorrect format at: " + counter);
+                        count = 1;
                     }
 
                     for (int c = 0; c < count; c++) {
@@ -490,7 +492,7 @@ public class Analyse {
                     try {
                         count = Integer.parseInt(cached);
                     } catch (Exception ex) {
-                        System.out.println("Incorrect format at: " + counter);
+                        count = 1;
                     }
                     for (int c = 0; c < count; c++) {
                         row.add(1);
@@ -501,16 +503,18 @@ public class Analyse {
                 }
 
             }
-            counter++;
             totalRows.add(row);
         }
+        int height = totalRows.size();
+        int width = totalRows.get(0).size();
+        Mat result = new Mat(height, width, type);
         for (int y = 0; y < totalRows.size(); y++) {
             ArrayList<Integer> row = totalRows.get(y);
             for (int x = 0; x < row.size(); x++) {
-                System.out.print("" + row.get(x));
+                int resX = row.get(x) * 254;
+                result.put(y, x, new double[]{resX, resX, resX});
             }
-            System.out.println("");
         }
-        return img;
+        return result;
     }
 }
