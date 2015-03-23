@@ -342,25 +342,20 @@ public class Analyse {
         blackPercentage.add((countBlack / totalPixels) * 100.0f);
         return blackPercentage;
     }
-    
-    public static Mat deleteWhiteRows (Mat src) {
+
+    public static Mat deleteWhiteRows(Mat src) {
         Mat dst = src.clone();
         int rindex = 0;
-        for (int r = 0; r < src.rows(); r++)
-        {
+        for (int r = 0; r < src.rows(); r++) {
             boolean count = false;
-            for (int c = 0; c < src.cols(); c++)
-            {
-                if (src.get(r, c)[0] < 127)
-                {
+            for (int c = 0; c < src.cols(); c++) {
+                if (src.get(r, c)[0] < 127) {
                     count = true;
                     break;
                 }
             }
-            if (count)
-            {
-                for (int c = 0; c < src.cols(); c++)
-                {
+            if (count) {
+                for (int c = 0; c < src.cols(); c++) {
                     dst.put(rindex, c, src.get(r, c));
                 }
                 rindex++;
@@ -368,37 +363,34 @@ public class Analyse {
         }
         return dst.submat(new Rect(0, 0, dst.cols(), rindex));
     }
-    
-    public static void rotate(Mat src, double angle, Mat dst)
-    {
-        int len = Math.max(src.cols(), src.rows());
-        Point pt = new Point (len/2.0, len/2.0);
-        Mat r = Imgproc.getRotationMatrix2D (pt, angle, 1.0);
 
-        Imgproc.warpAffine (src, dst, r, new Size(len, len));
+    public static void rotate(Mat src, double angle, Mat dst) {
+        int len = Math.max(src.cols(), src.rows());
+        Point pt = new Point(len / 2.0, len / 2.0);
+        Mat r = Imgproc.getRotationMatrix2D(pt, angle, 1.0);
+
+        Imgproc.warpAffine(src, dst, r, new Size(len, len));
     }
 
     public static float getHeightWidthRatio(Mat image) {
         return (float) image.cols() / (float) image.rows();
     }
 
-    public static double calcRotationAngleInDegrees(Point centerPt, Point targetPt)
-    {
+    public static double calcRotationAngleInDegrees(Point centerPt, Point targetPt) {
         double theta = Math.atan2(targetPt.y - centerPt.y, targetPt.x - centerPt.x);
 
-        theta += Math.PI/2.0;
+        theta += Math.PI / 2.0;
 
-        double angle = Math.toDegrees(theta);  
-        
+        double angle = Math.toDegrees(theta);
+
         if (angle < 0) {
             angle += 360;
         }
 
         return angle;
     }
-    
-    public static BufferedImage getBufferedImgFromMat (Mat img)
-    {
+
+    public static BufferedImage getBufferedImgFromMat(Mat img) {
         MatOfByte matOfByte = new MatOfByte();
         Highgui.imencode(".jpg", img, matOfByte);
         byte[] byteArray = matOfByte.toArray();
@@ -410,12 +402,11 @@ public class Analyse {
         } catch (IOException ex) {
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         return bufImage;
     }
-    
-    public static String encryptImage (Mat img, boolean print)
-    {
+
+    public static String encryptImage(Mat img, boolean print) {
         int icount = 0;
         int ocount = 0;
         String buffer = "";
@@ -461,10 +452,9 @@ public class Analyse {
             icount = 0;
             buffer += "-";
         }
-        if (print)
-        {
-            for (int i = 1; i < buffer.length()+1; i++) {
-                System.out.print(buffer.charAt(i-1));
+        if (print) {
+            for (int i = 1; i < buffer.length() + 1; i++) {
+                System.out.print(buffer.charAt(i - 1));
                 if (i % 60 == 0) {
                     System.out.println();
                 }
@@ -473,11 +463,54 @@ public class Analyse {
         }
         return buffer;
     }
-    
-    public static Mat decryptImage (String buffer)
-    {
+
+    public static Mat decryptImage(String buffer) {
         Mat img = null;
-        
+        String[] lines = buffer.split("-");
+        ArrayList<ArrayList<Integer>> totalRows = new ArrayList<>();
+        int counter = 0;
+        for (String s : lines) {
+            String cached = "";
+            ArrayList<Integer> row = new ArrayList<>();
+            for (int i = 0; i < s.length(); i++) {
+                if (s.charAt(i) == '.') {
+                    int count = 0;
+                    try {
+                        count = Integer.parseInt(cached);
+                    } catch (Exception ex) {
+                        System.out.println("Incorrect format at: " + counter);
+                    }
+
+                    for (int c = 0; c < count; c++) {
+                        row.add(0);
+                    }
+                    cached = "";
+                } else if (s.charAt(i) == '|') {
+                    int count = 0;
+                    try {
+                        count = Integer.parseInt(cached);
+                    } catch (Exception ex) {
+                        System.out.println("Incorrect format at: " + counter);
+                    }
+                    for (int c = 0; c < count; c++) {
+                        row.add(1);
+                    }
+                    cached = "";
+                } else {
+                    cached += s.charAt(i);
+                }
+
+            }
+            counter++;
+            totalRows.add(row);
+        }
+        for (int y = 0; y < totalRows.size(); y++) {
+            ArrayList<Integer> row = totalRows.get(y);
+            for (int x = 0; x < row.size(); x++) {
+                System.out.print("" + row.get(x));
+            }
+            System.out.println("");
+        }
         return img;
     }
 }
