@@ -13,7 +13,7 @@ public interface RmiServerIntf extends Remote
     public static final int RMI_REGISTER_ID = 1099;
     public static final String RMI_LOCATION = "//192.168.0.27/RmiServer";
     
-    public BufferedImage Rotate (BufferedImage Source, int Degrees) throws RemoteException;
+    public BufferedImage Rotate (BufferedImage Source, double Degrees) throws RemoteException;
     public BufferedImage RemoveButSelected (BufferedImage Source, ArrayList<Rectangle2D> KeepList) throws RemoteException;
     public File Start (BufferedImage Source, JProgressBar ProgressBar) throws RemoteException;
     

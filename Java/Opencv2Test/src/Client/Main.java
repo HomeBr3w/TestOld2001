@@ -10,31 +10,47 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.rmi.Naming;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JSlider;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import opencv2test.Core.Analyse;
+import opencv2test.Remote.RmiServerIntf;
 import opencv2test.Support.DrawBoxClass;
 import opencv2test.Support.DrawBoxState;
 import opencv2test.Support.DrawLineClass;
 import opencv2test.Support.DrawLineState;
-import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 import org.opencv.highgui.Highgui;
-import org.opencv.imgproc.Imgproc;
 
 /**
  *
  * @author jasper
  */
-public class MainLocal extends javax.swing.JFrame {
+public class Main extends javax.swing.JFrame {
 
     /**
      * Creates new form Main
      */
-    public MainLocal() {
+    public Main() {
         initComponents();
+        
+        try {
+            RMISERV = (RmiServerIntf)Naming.lookup(RmiServerIntf.RMI_LOCATION);
+        } catch (NotBoundException | MalformedURLException | RemoteException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
+    
+    RmiServerIntf RMISERV;
     
     private Color active = new Color(219,242,249);
     private Color nonactive = new Color(250, 250, 250);
@@ -92,12 +108,10 @@ public class MainLocal extends javax.swing.JFrame {
         repaint();
         revalidate();
         
-        BufferedImage bufImage = Analyse.getBufferedImgFromMat(img);
-
         window = new DrawLineClass("Draw a line on the first track. Try to match the line perfectly!");
         window.setLayout(new BorderLayout());
-        window.setBounds(500, 0, img.cols(), img.rows());
-        window.dlstate = new DrawLineState(bufImage);
+        window.setBounds(500, 0, img.getWidth(), img.getHeight());
+        window.dlstate = new DrawLineState(img);
         window.add(window.dlstate, BorderLayout.CENTER);
         
         window.dlstate.jslide = new JSlider(-1000, 1000, 0);
@@ -111,22 +125,21 @@ public class MainLocal extends javax.swing.JFrame {
     }
     
     private DrawBoxState window2;
-    private void goto3()
+    private void goto3() throws RemoteException
     {
         disableAll();
         
-        int w = img.cols();
-        int h = img.rows();
-        Analyse.rotate(img, (double)window.dlstate.rotation, img);
-        img = img.submat(new Rect(0,0, w, h));
+        int w = img.getWidth();
+        int h = img.getHeight();
         
+        img = RMISERV.Rotate(img, (double)window.dlstate.rotation);
+                
         window2 = new DrawBoxState("Mark the area's to keep. Left click-drag to mark. Right click to remove.");
         window2.img = img;
-        window2.setBounds(500,0,img.cols(), img.rows()+15);
+        window2.setBounds(500,0,img.getWidth(), img.getHeight()+15);
         window2.setVisible(true);
         
-        BufferedImage bufImage = Analyse.getBufferedImgFromMat(img);
-        window2.pp = new DrawBoxClass(bufImage);
+        window2.pp = new DrawBoxClass(img);
         window2.add(window2.pp, BorderLayout.CENTER);
         
         back22.setEnabled(true);
@@ -149,7 +162,8 @@ public class MainLocal extends javax.swing.JFrame {
         pbar.setValue(45);
     }
 
-    private Mat img;
+    private BufferedImage img;
+    private ArrayList<Integer> t;
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -417,10 +431,14 @@ public class MainLocal extends javax.swing.JFrame {
         }
         pathfound.setText(chooser.getSelectedFile().getName());
 
-        img = Highgui.imread(chooser.getSelectedFile().getPath());
-        Imgproc.resize(img, img, img.size());
         
-        if (img.rows() * img.cols() < 480000)
+        try {
+            img = ImageIO.read(chooser.getSelectedFile());
+        } catch (IOException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        if (img.getHeight()* img.getWidth()< 480000)
         {
             pathfound.setText("Image is too small!");
             bg1.setBackground(error);
@@ -442,7 +460,11 @@ public class MainLocal extends javax.swing.JFrame {
     }//GEN-LAST:event_back21ActionPerformed
 
     private void go23ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_go23ActionPerformed
-        goto3();
+        try {
+            goto3();
+        } catch (RemoteException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_go23ActionPerformed
 
     private void back22ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_back22ActionPerformed
@@ -454,12 +476,12 @@ public class MainLocal extends javax.swing.JFrame {
     }//GEN-LAST:event_go24ActionPerformed
 
     private void saveimgActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveimgActionPerformed
-        JFileChooser fc = new JFileChooser();
+        /*JFileChooser fc = new JFileChooser();
         if(fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
         {
             File f = fc.getSelectedFile();
             Highgui.imwrite(f.getAbsolutePath(), img);
-        }        
+        } */       
     }//GEN-LAST:event_saveimgActionPerformed
 
     private void savemp3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_savemp3ActionPerformed
@@ -487,14 +509,16 @@ public class MainLocal extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(MainLocal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(MainLocal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(MainLocal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(MainLocal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 
@@ -503,11 +527,11 @@ public class MainLocal extends javax.swing.JFrame {
         } else {
             System.load(new File("/opt/local/share/OpenCV/java/libopencv_java2410.dylib").getAbsolutePath());
         }
-        
+               
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new MainLocal().setVisible(true);
+                new Main().setVisible(true);
             }
         });
     }
