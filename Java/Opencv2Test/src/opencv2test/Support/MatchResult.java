@@ -16,27 +16,27 @@ public class MatchResult {
 
     private final Mat image;
     private final ClassifierImage compare;
-    private final float confidence;
+    private final float error;
 
     /**
      * Creates a new instance of MatchResult.
      * This is a data-holding class which is not doing any calculations.
-     * @param confidence
+     * @param error
      * @param compare
      * @param image 
      */
-    public MatchResult(float confidence, ClassifierImage compare, Mat image) {
-        this.confidence = confidence;
+    public MatchResult(float error, ClassifierImage compare, Mat image) {
+        this.error = error;
         this.compare = compare;
         this.image = image;
     }
 
     /**
-     * Returns the confidence of this match.
+     * Returns the error of this match.
      * @return 
      */
-    public float getConfidence() {
-        return confidence;
+    public float getError() {
+        return error;
     }
 
     /**

@@ -88,12 +88,12 @@ public class DebugClass {
                 float noteDuration = result.getCompared().getDuration();
                 int duration = (int) (noteDuration * 100);
                 track.addNote(channel, new Note(64, 100, timer, duration));
-                System.out.println(i + ") Result: " + result.getCompared().getName() + " Confidence: " + result.getConfidence() + " Adding note: Type: 64, Pitch 100, Duration: " + duration + " at tick nr. " + timer);
+                System.out.println(i + ") Result: " + result.getCompared().getName() + " Confidence: " + matcher.getConfidence() + " Adding note: Type: 64, Pitch 100, Duration: " + duration + " at tick nr. " + timer);
                 timer += duration;
             }
             else
             {
-                System.out.println(i + ") Result: " + result.getCompared().getName() + " Confidence: " + result.getConfidence());
+                System.out.println(i + ") Result: " + result.getCompared().getName() + " Confidence: " + matcher.getConfidence());
             }
         }
         midiSeq.writeToFile("testBV");

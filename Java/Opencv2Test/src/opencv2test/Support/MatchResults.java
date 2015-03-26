@@ -15,6 +15,7 @@ import java.util.Collections;
 public class MatchResults {
 
     private final ArrayList<MatchResult> results;
+    private float confidence;
 
     /**
      * Creates a new instance of MatchResults. This class contains a list with
@@ -35,8 +36,35 @@ public class MatchResults {
             return null;
         }
 
-        Collections.sort(results, (MatchResult m1, MatchResult m2) -> (int) (m2.getConfidence() * 1000 - m1.getConfidence() * 1000));
+        Collections.sort(results, (MatchResult m1, MatchResult m2) -> (int) (m2.getError() * 1000 - m1.getError() * 1000));
+        confidence = calculateConfidence();
         return results.get(0);
+    }
+    
+    /**
+     * Returns the confidence
+     * @return float confidence
+     */
+    public float getConfidence()
+    {
+        return confidence;
+    }
+    
+    /**
+     * Calculates the confidence:
+     * Formula: foreach ( MatchResult ) do sum += errorBestMatch / errorOtherResult[n]
+     * @return float confidence
+     */
+    private float calculateConfidence()
+    {
+        float totalSum = 0;
+        float errBestMatch = results.get(0).getError();
+        for(int i = 1; i < results.size(); i++)
+        {
+            float diff = results.get(i).getError() - errBestMatch;
+            totalSum += (diff / 100f);
+        }
+        return totalSum;
     }
 
     /**

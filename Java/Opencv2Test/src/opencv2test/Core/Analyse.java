@@ -245,7 +245,7 @@ public class Analyse {
             cropped = cropped.submat(roi);
             MatchResult result = blobMatcher.matchImage(cropped);
             //Opencv2Test.showResult(cropped);
-            System.out.println(i + ") Result: " + result.getCompared().getName() + " Confidence: " + result.getConfidence());
+            System.out.println(i + ") Result: " + result.getCompared().getName() + " Confidence: " + blobMatcher.getConfidence());
         }
     }
 

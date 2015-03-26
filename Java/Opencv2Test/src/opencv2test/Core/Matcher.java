@@ -41,14 +41,18 @@ public class Matcher {
         for (ClassifierImage ci : images) {
             matchResults.addResult(compareImage(ci, image));
         }
-
         return matchResults.getBestMatch();
+    }
+    
+    public float getConfidence()
+    {
+        return matchResults.getConfidence();
     }
 
     private MatchResult compareImage(ClassifierImage ci, Mat image) {
         ClassifierImage source = new ClassifierImage("sourceimg", image, -1);
-        float conf = 100.0f - ci.compare(source);
-        return new MatchResult(conf, ci, source.getImage());
+        float error = 100.0f - ci.compare(source);
+        return new MatchResult(error, ci, source.getImage());
     }
 
     public void addImage(String imageName, Mat image, int noteDuration) {
