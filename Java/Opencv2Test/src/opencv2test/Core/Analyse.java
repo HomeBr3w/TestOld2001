@@ -244,9 +244,17 @@ public class Analyse {
             Rect roi = new Rect(noteList.get(i).get(0), 5, noteList.get(i).get(1) - noteList.get(i).get(0), noteBar.rows() - 5);
             cropped = cropped.submat(roi);
             MatchResult result = blobMatcher.matchImage(cropped);
-            //Opencv2Test.showResult(cropped);
-            System.out.println(i + ") Result: " + result.getCompared().getName() + " Confidence: " + blobMatcher.getConfidence());
+            System.out.println(i + ") Result: " + result.getCompared().getName() + " Error: " + result.getError());
         }
+    }
+
+    public static void matchBlob(Mat noteBar, ArrayList<Integer> noteToFind, Matcher blobMatcher) {
+        Mat cropped = noteBar.clone();
+        Rect roi = new Rect(noteToFind.get(0), 5, noteToFind.get(1) - noteToFind.get(0), noteBar.rows() - 5);
+        cropped = cropped.submat(roi);
+        MatchResult result = blobMatcher.matchImage(cropped);
+        System.out.println("NOTE) Result: " + result.getCompared().getName() + " Error: " + result.getError());
+        Opencv2Test.showResult(result.getImage());
     }
 
     public static ArrayList<Mat> getROIperBlob(ArrayList<ArrayList<Integer>> blobList, Mat img) {
@@ -310,38 +318,36 @@ public class Analyse {
 
     public static ArrayList<Float> getBlackPercentage(Mat image) {
 
+        //top pixels
         ArrayList<Float> blackPercentage = new ArrayList<>();
-        float countBlack = 0;
-        float totalPixels = image.cols() * (image.rows() / 2);
+        float topBlackPixels = 0;
+        float topPixels = image.cols() * (image.rows() / 2);
         int r = 0;
         for (r = r; r < image.rows() / 2; r++) {
             for (int c = 0; c < image.cols(); c++) {
                 if (image.get(r, c)[0] < 127.0) {
-                    countBlack++;
+                    topBlackPixels++;
                 }
             }
         }
-        blackPercentage.add((countBlack / totalPixels) * 100.0f);
-        countBlack = 0;
-        totalPixels = image.cols() * (image.rows() - (image.rows() / 2));
+        blackPercentage.add((topBlackPixels / topPixels) * 100.0f);
+        //bottom pixels
+
+        float bottomBlackPixels = 0;
+        float bottomPixels = image.cols() * (image.rows() - (image.rows() / 2));
         for (r = r; r < image.rows(); r++) {
             for (int c = 0; c < image.cols(); c++) {
                 if (image.get(r, c)[0] < 127.0) {
-                    countBlack++;
+                    bottomBlackPixels++;
                 }
             }
         }
-        blackPercentage.add((countBlack / totalPixels) * 100.0f);
-        countBlack = 0;
-        totalPixels = image.cols() * image.rows();
-        for (r = 0; r < image.rows(); r++) {
-            for (int c = 0; c < image.cols(); c++) {
-                if (image.get(r, c)[0] < 127.0) {
-                    countBlack++;
-                }
-            }
-        }
-        blackPercentage.add((countBlack / totalPixels) * 100.0f);
+        blackPercentage.add((bottomBlackPixels / bottomPixels) * 100.0f);
+        //all pixels
+        float totalPixels = bottomPixels + topPixels;
+        float totalBlackPixels = bottomBlackPixels + topBlackPixels;
+
+        blackPercentage.add((totalBlackPixels / totalPixels) * 100.0f);
         return blackPercentage;
     }
 
@@ -407,16 +413,14 @@ public class Analyse {
 
         return bufImage;
     }
-   
-    public static Mat getMatFromBufferedImage (BufferedImage bi)
-    {
+
+    public static Mat getMatFromBufferedImage(BufferedImage bi) {
         Mat im = new Mat(bi.getHeight(), bi.getWidth(), 7);
         byte[] pixels = ((DataBufferByte) bi.getRaster().getDataBuffer()).getData();
         im.put(0, 0, pixels);
-        
+
         return im;
     }
-    
 
     public static String encryptImage(Mat img, boolean print) {
         int icount = 0;

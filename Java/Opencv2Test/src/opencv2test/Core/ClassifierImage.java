@@ -21,18 +21,19 @@ public class ClassifierImage {
     //private final float leftRightRatio;
     private final ArrayList<Float> blackPercentage;
     private final float noteDuration;
-    private final float MARGIN = 10.0f;
+    private final float MARGIN = 4.0f;
 
     /**
      * Wrapper around the original Mat class. So we can give the image a name!
      *
      * @param name
      * @param image
+     * @param noteDuration
      */
     public ClassifierImage(String name, Mat image, float noteDuration) {
         this.imageName = name;
         this.image = Analyse.isolateImage(Analyse.deleteWhiteRows(image));
-        this.heightWidthRatio = (float) image.cols() / (float) image.rows();
+        this.heightWidthRatio = Analyse.getHeightWidthRatio(this.image);
         this.blackPercentage = Analyse.getBlackPercentage(this.image);
         this.topDownRatio = blackPercentage.get(0) / blackPercentage.get(1);
         this.noteDuration = noteDuration;
@@ -79,30 +80,39 @@ public class ClassifierImage {
     }
 
     public float compare(ClassifierImage toCompare) {
+        System.out.println("===Comparing to " + imageName);
         float error = 0.0f;
-        float featureCount = 5.0f;
+        float featureCount = 4.0f;
         float incrementError = 100.0f / featureCount;
         float topPercentage = Math.abs(toCompare.getBlackPercentage().get(0) - blackPercentage.get(0));
-        if (topPercentage > MARGIN) {
+        System.out.println("  TOP: ToCompareValue: " + toCompare.getBlackPercentage().get(0) + " ThisValue: " + blackPercentage.get(0));
+        if (topPercentage > 5f) {
             error += incrementError;
+            System.out.println("    ERROR++: Top Difference: " + topPercentage);
         }
         float bottomPercentage = Math.abs(toCompare.getBlackPercentage().get(1) - blackPercentage.get(1));
-        if (bottomPercentage > MARGIN) {
+        System.out.println("  BOTTOM: ToCompareValue: " + toCompare.getBlackPercentage().get(1) + " ThisValue: " + blackPercentage.get(1));
+        if (bottomPercentage > 3f) {
             error += incrementError;
+            System.out.println("    ERROR++: Bottom Difference: " + bottomPercentage);
         }
         float totalPercentage = Math.abs(toCompare.getBlackPercentage().get(2) - blackPercentage.get(2));
-        if (totalPercentage > MARGIN) {
+        System.out.println("  TOTAL: ToCompareValue: " + toCompare.getBlackPercentage().get(2) + " ThisValue: " + blackPercentage.get(2));
+        if (totalPercentage > 5f) {
             error += incrementError;
+            System.out.println("    ERROR++: Total Difference: " + totalPercentage);
         }
-        float diffArea = Math.abs(toCompare.getHeightWidthRatio() - heightWidthRatio);
-        if (diffArea > 0.005f) {
+        
+        float hwRatio = toCompare.getHeightWidthRatio();
+        float diffArea = Math.abs(hwRatio - heightWidthRatio);
+        System.out.println("  HW: ToCompareValue: " + toCompare.getHeightWidthRatio() + " ThisValue: " + heightWidthRatio);
+        if (diffArea > 0.03f) {
             error += incrementError;
+            System.out.println("    ERROR++: HW-Difference: " + diffArea);
         }
+        System.out.println("===Fin.");
 
-        float diffTopDownRatio = Math.abs(toCompare.getTopDownRatio() - topDownRatio);
-        if (diffTopDownRatio > 0.01f) {
-            error += incrementError;
-        }
+        //System.out.println("========================================== END");
         //System.out.println("VVD DING: " + toCompare.getBlackPercentage().get(0) + " " + toCompare.getBlackPercentage().get(1));
         //System.out.println("ORIG: " + blackPercentage.get(0) + " " + blackPercentage.get(1));
         return error;

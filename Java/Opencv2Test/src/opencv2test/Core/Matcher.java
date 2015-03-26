@@ -19,7 +19,7 @@ public class Matcher {
     public static final int DEFAULT_ROTATIONS = 16;
     public static final boolean DEFAULT_MIRRORMODE = false;
 
-    private final MatchResults matchResults = new MatchResults();
+    private MatchResults matchResults = new MatchResults();
     private final boolean mirrorImage;
     private final int rotations;
     private final ArrayList<ClassifierImage> images;
@@ -37,21 +37,16 @@ public class Matcher {
     }
 
     public MatchResult matchImage(Mat image) {
-        matchResults.clear();
+        matchResults = new MatchResults();
         for (ClassifierImage ci : images) {
             matchResults.addResult(compareImage(ci, image));
         }
         return matchResults.getBestMatch();
     }
     
-    public float getConfidence()
-    {
-        return matchResults.getConfidence();
-    }
-
     private MatchResult compareImage(ClassifierImage ci, Mat image) {
         ClassifierImage source = new ClassifierImage("sourceimg", image, -1);
-        float error = 100.0f - ci.compare(source);
+        float error = ci.compare(source);
         return new MatchResult(error, ci, source.getImage());
     }
 

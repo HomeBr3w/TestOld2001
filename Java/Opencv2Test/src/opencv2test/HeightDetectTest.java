@@ -43,17 +43,18 @@ public class HeightDetectTest {
     }
 
     public void init() {
-        classifierImages = new ArrayList<>();
-        classifierImages.add(new ClassifierImage("sleutel", Highgui.imread("C:\\Kees\\sleutel.jpg"), -1f));
+        classifierImages = new ArrayList<>();/*
+        classifierImages.add(new ClassifierImage("sleutel", Highgui.imread("C:\\Kees\\sleutel.jpg"), -1f));*/
         classifierImages.add(new ClassifierImage("kwartnoot", Highgui.imread("C:\\Kees\\kwartnoot.jpg"), 1f));
-        classifierImages.add(new ClassifierImage("halvenoot", Highgui.imread("C:\\Kees\\halve noot.jpg"), 2f));
+        classifierImages.add(new ClassifierImage("halvenoot", Highgui.imread("C:\\Kees\\halve noot.jpg"), 2f));/*
         classifierImages.add(new ClassifierImage("hele noot", Highgui.imread("C:\\Kees\\hele noot.jpg"), 4f));
         classifierImages.add(new ClassifierImage("#", Highgui.imread("C:\\Kees\\#.jpg"), -1f));
         classifierImages.add(new ClassifierImage("achtste noot", Highgui.imread("C:\\Kees\\achtste noot.jpg"), 0.5f));
         classifierImages.add(new ClassifierImage("maatstreep", Highgui.imread("C:\\Kees\\maatstreep.jpg"), -1f));
         classifierImages.add(new ClassifierImage("tempoding", Highgui.imread("C:\\Kees\\tempoding.jpg"), -1f));
         classifierImages.add(new ClassifierImage("halfopdekop", Highgui.imread("C:\\Kees\\halfopdekop.jpg"), 2f));
-        classifierImages.add(new ClassifierImage("hele met vermate", Highgui.imread("C:\\Kees\\vermate.jpg"), 4f));
+        classifierImages.add(new ClassifierImage("hele met vermate", Highgui.imread("C:\\Kees\\vermate.jpg"), 4f));*/
+
     }
 
     public void run(Mat img) {
@@ -65,12 +66,15 @@ public class HeightDetectTest {
         ArrayList<ArrayList<Integer>> blobList = Analyse.oneDimensionalHorizontalBlobFinder(rowCounted);
         ArrayList<Mat> bars = Analyse.getROIperBlob(blobList, img);
         matcher = new Matcher(classifierImages);
-        
+
         for (Mat v : bars) {
+            System.out.println("Bar: ");
             Mat filteredImage = Analyse.filterDifference(v, Analyse.averageRows(v));
             ArrayList<ArrayList<Integer>> noteList = Analyse.oneDimensionalVerticalBlobFinder(Analyse.averageCols(filteredImage));
             Analyse.matchBlobs(filteredImage, noteList, matcher);
             showResult(filteredImage);
+            System.out.println("============================================================");
+            break;
         }
 
         //Teken gevonden blobs
