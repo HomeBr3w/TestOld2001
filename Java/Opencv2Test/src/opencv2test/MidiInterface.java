@@ -13,14 +13,16 @@ import opencv2test.Support.Note;
  *
  * @author Siebren
  */
-public class MidiInterface {
+public class MidiInterface
+{
 
     /**
      *
      * @param args
      * @throws Exception
      */
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception
+    {
 
         MidiSequence sequence = new MidiSequence(72);
         MidiTrack tr = sequence.createTrack("miditrack 1");
@@ -96,7 +98,8 @@ public class MidiInterface {
         tr.addNote(0, new Note(54, 50, 1500, 100));//F#
         tr.addNote(0, new Note(57, 50, 1550, 50));//A
 
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 2; i++)
+        {
             //maat 5
             tr2.addNote(0, new Note(67, 75, 1650 + (i * 1600), 25)); //G
             tr2.addNote(0, new Note(66, 75, 1675 + (i * 1600), 25)); //F#
