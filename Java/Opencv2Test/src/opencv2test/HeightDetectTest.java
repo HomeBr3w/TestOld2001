@@ -11,7 +11,11 @@ import java.util.ArrayList;
 import opencv2test.Core.Analyse;
 import opencv2test.Core.ClassifierImage;
 import opencv2test.Core.Matcher;
+import opencv2test.Core.MidiSequence;
 import static opencv2test.Opencv2Test.showResult;
+import opencv2test.Support.MatchResult;
+import opencv2test.Support.MidiTrack;
+import opencv2test.Support.Note;
 import org.opencv.core.Mat;
 import org.opencv.highgui.Highgui;
 
@@ -58,11 +62,15 @@ public class HeightDetectTest
         classifierImages.add(new ClassifierImage("tempoding", Highgui.imread("C:\\Kees\\tempoding.jpg"), -1f));
         classifierImages.add(new ClassifierImage("halfopdekop", Highgui.imread("C:\\Kees\\halfopdekop.jpg"), 2f));
         classifierImages.add(new ClassifierImage("hele met vermate", Highgui.imread("C:\\Kees\\vermate.jpg"), 4f));
-
+        classifierImages.add(new ClassifierImage("stip", Highgui.imread("C:\\Kees\\stip.jpg"), -1f));
     }
 
     public void run(Mat img)
     {
+        MidiSequence sequence = new MidiSequence();
+        MidiTrack tr = sequence.createTrack("generated track");
+        int currentChannel = 0;
+        int currentTick = 0;
         Mat grey = img.clone();
         Analyse.convertToGrey(grey);
         Analyse.thresholdISOBlack(grey, grey);
@@ -72,16 +80,71 @@ public class HeightDetectTest
         ArrayList<Mat> bars = Analyse.getROIperBlob(blobList, img);
         matcher = new Matcher(classifierImages);
 
-        for (Mat v : bars)
+        /*
+         Loop through the bars and identify the corresponding blobs.
+         */
+        for (Mat singleBar : bars)
         {
+            //Mat v = bars.get(2);
             System.out.println("Bar: ");
-            Mat filteredImage = Analyse.filterDifference(v, Analyse.averageRows(v));
+            Mat filteredImage = Analyse.filterDifference(singleBar, Analyse.averageRows(singleBar));
             ArrayList<ArrayList<Integer>> noteList = Analyse.oneDimensionalVerticalBlobFinder(Analyse.averageCols(filteredImage));
-            Analyse.matchBlobs(filteredImage, noteList, matcher);
+            ArrayList<MatchResult> results = Analyse.matchBlobs(filteredImage, noteList, matcher);
+            ArrayList<Note> notes = new ArrayList<>();
+            /*
+             Match all the images and create notes.
+             */
+            for (MatchResult r : results)
+            {
+                ArrayList<Integer> sharps = new ArrayList<>();
+                ArrayList<Integer> flats = new ArrayList<>();
+                int keyLocation = -2;
+                float duration = r.getCompared().getDuration() * 100f;
+                if (duration > 0)
+                {
+                    int noteHeight = Analyse.getNoteHeight(singleBar, noteList, r.getCompared().getImage(), keyLocation);
+                    Note toAdd = new Note(noteHeight, 120, currentTick, (int) duration);
+                    if (sharps.contains(toAdd.getNote()))
+                    {
+                        toAdd.applySharp();
+                    }
+                    if (flats.contains(toAdd.getNote()))
+                    {
+                        toAdd.applyFlat();
+                    }
+                    notes.add(toAdd);
+
+                    System.out.println("Adding " + r.getCompared().getName() + " at tick: " + currentTick + " with duration: " + duration);
+                    currentTick += (int) duration;
+                }
+                if ("stip".equals(r.getCompared().getName()) && notes.size() > 0)
+                {
+                    Note toPoint = notes.get(notes.size() - 1);
+                    duration -= toPoint.getDuration();
+                    toPoint.applyPoint();
+                    duration += toPoint.getDuration();
+                }
+                else if ("sleutel".equals(r.getCompared().getName()))
+                {
+                    keyLocation = Analyse.getNoteHeight(singleBar, noteList, r.getCompared().getImage(), -1);
+                }
+                else if ("#".equals(r.getCompared().getName()))
+                {
+                    sharps.add(Analyse.getNoteHeight(singleBar, noteList, r.getCompared().getImage(), -1));
+                }
+            }
+            //Add all notes to the track.
+            for (Note n : notes)
+            {
+                tr.addNote(currentChannel, n);
+            }
             showResult(filteredImage);
             System.out.println("============================================================");
+            currentChannel++;
             //break;
         }
+
+        sequence.writeToFile("generated midi");
 
         //Teken gevonden blobs
         Analyse.drawOneDimensionalBlobsHorizontal(blobList, img);
