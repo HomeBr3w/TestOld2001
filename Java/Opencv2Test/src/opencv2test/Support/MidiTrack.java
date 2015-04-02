@@ -33,7 +33,7 @@ public class MidiTrack
         this.trackName = trackName;
         this.track = track;
         this.init();
-        this.setTrackName(trackName);
+        this.setTrackName();
     }
 
     /**
@@ -88,14 +88,11 @@ public class MidiTrack
      *
      * @param trackName
      */
-    private void setTrackName(String trackName)
+    private void setTrackName()
     {
         try
         {
-            MetaMessage metaMessage = new MetaMessage();
-            metaMessage.setMessage(0x03, trackName.getBytes(), trackName.length());
-            MidiEvent midiEvent = new MidiEvent(metaMessage, (long) 0);
-            track.add(midiEvent);
+            track.add(new MidiEvent(new MetaMessage(0x03, trackName.getBytes(), trackName.length()), (long) 0));
         }
         catch (InvalidMidiDataException ex)
         {
@@ -110,11 +107,11 @@ public class MidiTrack
      * @param channel
      * @param program
      */
-    public void changeProgram(int channel, int program)
+    public void changeInstrument(int channel, int program)
     {
         try
         {
-            track.add(new MidiEvent(new ShortMessage(ShortMessage.PROGRAM_CHANGE, channel, program), 0));
+            track.add(new MidiEvent(new ShortMessage(ShortMessage.PROGRAM_CHANGE, channel, program, 0), 0));
         }
         catch (InvalidMidiDataException ex)
         {

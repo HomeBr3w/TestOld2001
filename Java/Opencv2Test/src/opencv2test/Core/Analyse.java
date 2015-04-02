@@ -219,7 +219,7 @@ public class Analyse
         Mat element = Imgproc.getStructuringElement(erosionType,
                 new Size(2 * erosionSize + 1, 2 * erosionSize + 1),
                 new Point(erosionSize, erosionSize));
-        /// Apply the dilation operation
+        /// Apply the erosion operation
         Imgproc.erode(bron, bron, element);
     }
 
