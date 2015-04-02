@@ -12,8 +12,9 @@ import org.opencv.core.Mat;
  *
  * @author Siebren
  */
-public class ClassifierImage {
-
+public class ClassifierImage
+{
+    private static final boolean DEBUG_VAL = false;
     private final String imageName;
     private final Mat image;
     private final float heightWidthRatio;
@@ -21,7 +22,6 @@ public class ClassifierImage {
     //private final float leftRightRatio;
     private final ArrayList<Float> blackPercentage;
     private final float noteDuration;
-    private final float MARGIN = 4.0f;
 
     /**
      * Wrapper around the original Mat class. So we can give the image a name!
@@ -30,7 +30,8 @@ public class ClassifierImage {
      * @param image
      * @param noteDuration
      */
-    public ClassifierImage(String name, Mat image, float noteDuration) {
+    public ClassifierImage(String name, Mat image, float noteDuration)
+    {
         this.imageName = name;
         this.image = Analyse.isolateImage(Analyse.deleteWhiteRows(image));
         this.heightWidthRatio = Analyse.getHeightWidthRatio(this.image);
@@ -44,7 +45,8 @@ public class ClassifierImage {
      *
      * @return
      */
-    public String getName() {
+    public String getName()
+    {
         return imageName;
     }
 
@@ -53,7 +55,8 @@ public class ClassifierImage {
      *
      * @return
      */
-    public Mat getImage() {
+    public Mat getImage()
+    {
         return image;
     }
 
@@ -62,11 +65,13 @@ public class ClassifierImage {
      *
      * @return
      */
-    public ArrayList<Float> getBlackPercentage() {
+    public ArrayList<Float> getBlackPercentage()
+    {
         return blackPercentage;
     }
 
-    public float getTopDownRatio() {
+    public float getTopDownRatio()
+    {
         return topDownRatio;
     }
 
@@ -75,42 +80,78 @@ public class ClassifierImage {
      *
      * @return
      */
-    public float getHeightWidthRatio() {
+    public float getHeightWidthRatio()
+    {
         return heightWidthRatio;
     }
 
-    public float compare(ClassifierImage toCompare) {
-        System.out.println("===Comparing to " + imageName);
+    public float compare(ClassifierImage toCompare)
+    {
+        if (DEBUG_VAL)
+        {
+            System.out.println("===Comparing to " + imageName);
+        }
         float error = 0.0f;
         float featureCount = 4.0f;
         float incrementError = 100.0f / featureCount;
         float topPercentage = Math.abs(toCompare.getBlackPercentage().get(0) - blackPercentage.get(0));
-        System.out.println("  TOP: ToCompareValue: " + toCompare.getBlackPercentage().get(0) + " ThisValue: " + blackPercentage.get(0));
-        if (topPercentage > 5f) {
+        if (DEBUG_VAL)
+        {
+            System.out.println("  TOP: ToCompareValue: " + toCompare.getBlackPercentage().get(0) + " ThisValue: " + blackPercentage.get(0));
+        }
+        if (topPercentage > 5.5f)
+        {
             error += incrementError;
-            System.out.println("    ERROR++: Top Difference: " + topPercentage);
+            if (DEBUG_VAL)
+            {
+                System.out.println("    ERROR++: Top Difference: " + topPercentage);
+            }
         }
         float bottomPercentage = Math.abs(toCompare.getBlackPercentage().get(1) - blackPercentage.get(1));
-        System.out.println("  BOTTOM: ToCompareValue: " + toCompare.getBlackPercentage().get(1) + " ThisValue: " + blackPercentage.get(1));
-        if (bottomPercentage > 3f) {
+        if (DEBUG_VAL)
+        {
+            System.out.println("  BOTTOM: ToCompareValue: " + toCompare.getBlackPercentage().get(1) + " ThisValue: " + blackPercentage.get(1));
+        }
+        if (bottomPercentage > 3f)
+        {
             error += incrementError;
-            System.out.println("    ERROR++: Bottom Difference: " + bottomPercentage);
+            if (DEBUG_VAL)
+            {
+                System.out.println("    ERROR++: Bottom Difference: " + bottomPercentage);
+            }
         }
         float totalPercentage = Math.abs(toCompare.getBlackPercentage().get(2) - blackPercentage.get(2));
-        System.out.println("  TOTAL: ToCompareValue: " + toCompare.getBlackPercentage().get(2) + " ThisValue: " + blackPercentage.get(2));
-        if (totalPercentage > 5f) {
-            error += incrementError;
-            System.out.println("    ERROR++: Total Difference: " + totalPercentage);
+        if (DEBUG_VAL)
+        {
+            System.out.println("  TOTAL: ToCompareValue: " + toCompare.getBlackPercentage().get(2) + " ThisValue: " + blackPercentage.get(2));
         }
-        
+        if (totalPercentage > 7.5f)
+        {
+            error += incrementError;
+            if (DEBUG_VAL)
+            {
+                System.out.println("    ERROR++: Total Difference: " + totalPercentage);
+            }
+        }
+
         float hwRatio = toCompare.getHeightWidthRatio();
         float diffArea = Math.abs(hwRatio - heightWidthRatio);
-        System.out.println("  HW: ToCompareValue: " + toCompare.getHeightWidthRatio() + " ThisValue: " + heightWidthRatio);
-        if (diffArea > 0.03f) {
-            error += incrementError;
-            System.out.println("    ERROR++: HW-Difference: " + diffArea);
+        if (DEBUG_VAL)
+        {
+            System.out.println("  HW: ToCompareValue: " + toCompare.getHeightWidthRatio() + " ThisValue: " + heightWidthRatio);
         }
-        System.out.println("===Fin.");
+        if (diffArea > 0.03f)
+        {
+            error += incrementError;
+            if (DEBUG_VAL)
+            {
+                System.out.println("    ERROR++: HW-Difference: " + diffArea);
+            }
+        }
+        if (DEBUG_VAL)
+        {
+            System.out.println("===Fin.");
+        }
 
         //System.out.println("========================================== END");
         //System.out.println("VVD DING: " + toCompare.getBlackPercentage().get(0) + " " + toCompare.getBlackPercentage().get(1));
@@ -118,7 +159,8 @@ public class ClassifierImage {
         return error;
     }
 
-    public float getDuration() {
+    public float getDuration()
+    {
         return noteDuration;
     }
 }
