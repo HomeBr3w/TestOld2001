@@ -24,10 +24,10 @@ public class MidiInterface
     public static void main(String[] args) throws Exception
     {
 
-        MidiSequence sequence = new MidiSequence(80);
+        MidiSequence sequence = new MidiSequence(90);
         MidiTrack tr = sequence.createTrack("comptine d une autre ete");
-        //tr.changeInstrument(0, 43);
-        //tr.changeInstrument(1, 41);
+        tr.changeInstrument(0, 44);
+        tr.changeInstrument(1, 42);
 
         //maat 1
         //tr2.addPause(0, 400);
@@ -177,21 +177,21 @@ public class MidiInterface
             tr.addNote(1, new Note(64, 75, 2875 + (i * 1600), 25)); //E
             tr.addNote(1, new Note(66, 75, 2900 + (i * 1600), 300)); //F#
 
-            tr.addNote(0, new Note(62, 50, 2800 + (i * 1600), 50));//D
-            tr.addNote(0, new Note(50, 50, 2800 + (i * 1600), 100));//D
-            tr.addNote(0, new Note(57, 50, 2850 + (i * 1600), 50));//A
+            tr.addNote(0, new Note(62, 75, 2800 + (i * 1600), 50));//D
+            tr.addNote(0, new Note(50, 75, 2800 + (i * 1600), 100));//D
+            tr.addNote(0, new Note(57, 75, 2850 + (i * 1600), 50));//A
 
-            tr.addNote(0, new Note(62, 50, 2900 + (i * 1600), 50));//D
-            tr.addNote(0, new Note(54, 50, 2900 + (i * 1600), 100));//F#
-            tr.addNote(0, new Note(57, 50, 2950 + (i * 1600), 50));//A
+            tr.addNote(0, new Note(62, 75, 2900 + (i * 1600), 50));//D
+            tr.addNote(0, new Note(54, 75, 2900 + (i * 1600), 100));//F#
+            tr.addNote(0, new Note(57, 75, 2950 + (i * 1600), 50));//A
 
-            tr.addNote(0, new Note(62, 50, 3000 + (i * 1600), 50));//D
-            tr.addNote(0, new Note(50, 50, 3000 + (i * 1600), 100));//D
-            tr.addNote(0, new Note(57, 50, 3050 + (i * 1600), 50));//A
+            tr.addNote(0, new Note(62, 75, 3000 + (i * 1600), 50));//D
+            tr.addNote(0, new Note(50, 75, 3000 + (i * 1600), 100));//D
+            tr.addNote(0, new Note(57, 75, 3050 + (i * 1600), 50));//A
 
-            tr.addNote(0, new Note(62, 50, 3100 + (i * 1600), 50));//D
-            tr.addNote(0, new Note(54, 50, 3100 + (i * 1600), 100));//F#
-            tr.addNote(0, new Note(57, 50, 3150 + (i * 1600), 50));//A 
+            tr.addNote(0, new Note(62, 75, 3100 + (i * 1600), 50));//D
+            tr.addNote(0, new Note(54, 75, 3100 + (i * 1600), 100));//F#
+            tr.addNote(0, new Note(57, 75, 3150 + (i * 1600), 50));//A 
         }
 
         //maat 9
