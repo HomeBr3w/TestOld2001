@@ -18,9 +18,11 @@ public class MidiInterface {
      */
     public static void main(String[] args) throws Exception {
 
-        MidiSequence sequence = new MidiSequence(100);
+        MidiSequence sequence = new MidiSequence(90);
         MidiTrack tr = sequence.createTrack("miditrack 1");
-        MidiTrack tr2 = sequence.createTrack("miditrack 2");
+        tr.changeInstrument(0, 53, 0);
+        tr.changeInstrument(1, 53, 0);
+        //MidiTrack tr2 = sequence.createTrack("miditrack 2");
 
         //maat 1
         //tr2.addPause(0, 400);
@@ -72,7 +74,6 @@ public class MidiInterface {
 
         tr.addNote(0, new Note(62, 50, 1100, 50));//D
         tr.addNote(0, new Note(54, 50, 1100, 100));//F#
-
         tr.addNote(0, new Note(59, 50, 1150, 50));//B        
 
         //maat 4
@@ -94,81 +95,81 @@ public class MidiInterface {
 
         for (int i = 0; i < 2; i++) {
             //maat 5
-            tr2.addNote(0, new Note(67, 75, 1650 + (i * 1600), 25)); //G
-            tr2.addNote(0, new Note(66, 75, 1675 + (i * 1600), 25)); //F#
-            tr2.addNote(0, new Note(67, 75, 1700 + (i * 1600), 50)); //G
-            tr2.addNote(0, new Note(71, 75, 1750 + (i * 1600), 25)); //B
-            tr2.addNote(0, new Note(72, 75, 1775 + (i * 1600), 25)); //C
-            tr2.addNote(0, new Note(71, 75, 1800 + (i * 1600), 200)); //B
+            tr.addNote(1, new Note(67, 75, 1650 + (i * 1600), 25)); //G
+            tr.addNote(1, new Note(66, 75, 1675 + (i * 1600), 25)); //F#
+            tr.addNote(1, new Note(67, 75, 1700 + (i * 1600), 50)); //G
+            tr.addNote(1, new Note(71, 75, 1750 + (i * 1600), 25)); //B
+            tr.addNote(1, new Note(72, 75, 1775 + (i * 1600), 25)); //C
+            tr.addNote(1, new Note(71, 75, 1800 + (i * 1600), 200)); //B
 
-            tr.addNote(0, new Note(64, 75, 1600 + (i * 1600), 50)); // E
-            tr.addNote(0, new Note(52, 75, 1600 + (i * 1600), 100)); // E
-            tr.addNote(0, new Note(59, 75, 1650 + (i * 1600), 50)); // B
+            tr.addNote(0, new Note(64, 50, 1600 + (i * 1600), 50)); // E
+            tr.addNote(0, new Note(52, 50, 1600 + (i * 1600), 100)); // E
+            tr.addNote(0, new Note(59, 50, 1650 + (i * 1600), 50)); // B
 
-            tr.addNote(0, new Note(64, 75, 1700 + (i * 1600), 50)); //E
-            tr.addNote(0, new Note(55, 75, 1700 + (i * 1600), 100)); //G
-            tr.addNote(0, new Note(59, 75, 1750 + (i * 1600), 50));//B
+            tr.addNote(0, new Note(64, 50, 1700 + (i * 1600), 50)); //E
+            tr.addNote(0, new Note(55, 50, 1700 + (i * 1600), 100)); //G
+            tr.addNote(0, new Note(59, 50, 1750 + (i * 1600), 50));//B
 
-            tr.addNote(0, new Note(64, 75, 1800 + (i * 1600), 50));//E
-            tr.addNote(0, new Note(52, 75, 1800 + (i * 1600), 100));//E
-            tr.addNote(0, new Note(59, 75, 1850 + (i * 1600), 50));//B
+            tr.addNote(0, new Note(64, 50, 1800 + (i * 1600), 50));//E
+            tr.addNote(0, new Note(52, 50, 1800 + (i * 1600), 100));//E
+            tr.addNote(0, new Note(59, 50, 1850 + (i * 1600), 50));//B
 
-            tr.addNote(0, new Note(64, 75, 1900 + (i * 1600), 50));//E
-            tr.addNote(0, new Note(55, 75, 1900 + (i * 1600), 100));//G        
-            tr.addNote(0, new Note(59, 75, 1950 + (i * 1600), 50));//B
+            tr.addNote(0, new Note(64, 50, 1900 + (i * 1600), 50));//E
+            tr.addNote(0, new Note(55, 50, 1900 + (i * 1600), 100));//G        
+            tr.addNote(0, new Note(59, 50, 1950 + (i * 1600), 50));//B
 
             //maat 6
-            tr2.addNote(0, new Note(66, 75, 2050 + (i * 1600), 25)); //F#
-            tr2.addNote(0, new Note(67, 75, 2075 + (i * 1600), 25)); //G
-            tr2.addNote(0, new Note(66, 75, 2100 + (i * 1600), 50)); //F#
-            tr2.addNote(0, new Note(67, 75, 2150 + (i * 1600), 25)); //G
-            tr2.addNote(0, new Note(69, 75, 2175 + (i * 1600), 25)); //A
-            tr2.addNote(0, new Note(67, 75, 2200 + (i * 1600), 200)); //G
+            tr.addNote(1, new Note(66, 75, 2050 + (i * 1600), 25)); //F#
+            tr.addNote(1, new Note(67, 75, 2075 + (i * 1600), 25)); //G
+            tr.addNote(1, new Note(66, 75, 2100 + (i * 1600), 50)); //F#
+            tr.addNote(1, new Note(67, 75, 2150 + (i * 1600), 25)); //G
+            tr.addNote(1, new Note(69, 75, 2175 + (i * 1600), 25)); //A
+            tr.addNote(1, new Note(67, 75, 2200 + (i * 1600), 200)); //G
 
-            tr.addNote(0, new Note(62, 75, 2000 + (i * 1600), 50));//D
-            tr.addNote(0, new Note(50, 75, 2000 + (i * 1600), 100));//D
-            tr.addNote(0, new Note(59, 75, 2050 + (i * 1600), 50));//B
+            tr.addNote(0, new Note(62, 50, 2000 + (i * 1600), 50));//D
+            tr.addNote(0, new Note(50, 50, 2000 + (i * 1600), 100));//D
+            tr.addNote(0, new Note(59, 50, 2050 + (i * 1600), 50));//B
 
-            tr.addNote(0, new Note(62, 75, 2100 + (i * 1600), 50));//D
-            tr.addNote(0, new Note(55, 75, 2100 + (i * 1600), 100));//G
-            tr.addNote(0, new Note(59, 75, 2150 + (i * 1600), 50));//B
+            tr.addNote(0, new Note(62, 50, 2100 + (i * 1600), 50));//D
+            tr.addNote(0, new Note(55, 50, 2100 + (i * 1600), 100));//G
+            tr.addNote(0, new Note(59, 50, 2150 + (i * 1600), 50));//B
 
-            tr.addNote(0, new Note(62, 75, 2200 + (i * 1600), 50));//D
-            tr.addNote(0, new Note(50, 75, 2200 + (i * 1600), 100));//D
-            tr.addNote(0, new Note(59, 75, 2250 + (i * 1600), 50));//B
+            tr.addNote(0, new Note(62, 50, 2200 + (i * 1600), 50));//D
+            tr.addNote(0, new Note(50, 50, 2200 + (i * 1600), 100));//D
+            tr.addNote(0, new Note(59, 50, 2250 + (i * 1600), 50));//B
 
-            tr.addNote(0, new Note(62, 75, 2300 + (i * 1600), 50));//D
-            tr.addNote(0, new Note(55, 75, 2300 + (i * 1600), 100));//G
-            tr.addNote(0, new Note(59, 75, 2350 + (i * 1600), 50));//B
+            tr.addNote(0, new Note(62, 50, 2300 + (i * 1600), 50));//D
+            tr.addNote(0, new Note(55, 50, 2300 + (i * 1600), 100));//G
+            tr.addNote(0, new Note(59, 50, 2350 + (i * 1600), 50));//B
 
             //maat 7
-            tr2.addNote(0, new Note(66, 75, 2450 + (i * 1600), 25)); //F#
-            tr2.addNote(0, new Note(64, 75, 2475 + (i * 1600), 25)); //E
-            tr2.addNote(0, new Note(66, 75, 2500 + (i * 1600), 50)); //F#
-            tr2.addNote(0, new Note(71, 75, 2550 + (i * 1600), 25));//B
-            tr2.addNote(0, new Note(72, 75, 2575 + (i * 1600), 25));//C
-            tr2.addNote(0, new Note(71, 75, 2600 + (i * 1600), 200)); //B
+            tr.addNote(1, new Note(66, 75, 2450 + (i * 1600), 25)); //F#
+            tr.addNote(1, new Note(64, 75, 2475 + (i * 1600), 25)); //E
+            tr.addNote(1, new Note(66, 75, 2500 + (i * 1600), 50)); //F#
+            tr.addNote(1, new Note(71, 75, 2550 + (i * 1600), 25));//B
+            tr.addNote(1, new Note(72, 75, 2575 + (i * 1600), 25));//C
+            tr.addNote(1, new Note(71, 75, 2600 + (i * 1600), 200)); //B
 
-            tr.addNote(0, new Note(62, 75, 2400 + (i * 1600), 50));//D
-            tr.addNote(0, new Note(50, 75, 2400 + (i * 1600), 100));//D
-            tr.addNote(0, new Note(59, 75, 2450 + (i * 1600), 50));//B
+            tr.addNote(0, new Note(62, 50, 2400 + (i * 1600), 50));//D
+            tr.addNote(0, new Note(50, 50, 2400 + (i * 1600), 100));//D
+            tr.addNote(0, new Note(59, 50, 2450 + (i * 1600), 50));//B
 
-            tr.addNote(0, new Note(62, 75, 2500 + (i * 1600), 50));//D
-            tr.addNote(0, new Note(54, 75, 2500 + (i * 1600), 100));//F#
-            tr.addNote(0, new Note(59, 75, 2550 + (i * 1600), 50));//B
+            tr.addNote(0, new Note(62, 50, 2500 + (i * 1600), 50));//D
+            tr.addNote(0, new Note(54, 50, 2500 + (i * 1600), 100));//F#
+            tr.addNote(0, new Note(59, 50, 2550 + (i * 1600), 50));//B
 
-            tr.addNote(0, new Note(62, 75, 2600 + (i * 1600), 50));//D
-            tr.addNote(0, new Note(50, 75, 2600 + (i * 1600), 100));//D
-            tr.addNote(0, new Note(59, 75, 2650 + (i * 1600), 50));//B
+            tr.addNote(0, new Note(62, 50, 2600 + (i * 1600), 50));//D
+            tr.addNote(0, new Note(50, 50, 2600 + (i * 1600), 100));//D
+            tr.addNote(0, new Note(59, 50, 2650 + (i * 1600), 50));//B
 
-            tr.addNote(0, new Note(62, 75, 2700 + (i * 1600), 50));//D
-            tr.addNote(0, new Note(54, 75, 2700 + (i * 1600), 100));//F#
-            tr.addNote(0, new Note(59, 75, 2750 + (i * 1600), 50));//B           
+            tr.addNote(0, new Note(62, 50, 2700 + (i * 1600), 50));//D
+            tr.addNote(0, new Note(54, 50, 2700 + (i * 1600), 100));//F#
+            tr.addNote(0, new Note(59, 50, 2750 + (i * 1600), 50));//B           
 
             //maat 8
-            tr2.addNote(0, new Note(66, 75, 2850 + (i * 1600), 25)); //F#
-            tr2.addNote(0, new Note(64, 75, 2875 + (i * 1600), 25)); //E
-            tr2.addNote(0, new Note(66, 75, 2900 + (i * 1600), 300)); //F#
+            tr.addNote(1, new Note(66, 75, 2850 + (i * 1600), 25)); //F#
+            tr.addNote(1, new Note(64, 75, 2875 + (i * 1600), 25)); //E
+            tr.addNote(1, new Note(66, 75, 2900 + (i * 1600), 300)); //F#
 
             tr.addNote(0, new Note(62, 50, 2800 + (i * 1600), 50));//D
             tr.addNote(0, new Note(50, 50, 2800 + (i * 1600), 100));//D
@@ -188,8 +189,8 @@ public class MidiInterface {
         }
 
         //maat 9
-        tr2.addNote(0, new Note(76, 50, 3200 + 1600, 150));//E
-        tr2.addNote(0, new Note(71, 50, 3350 + 1600, 250));//B
+        tr.addNote(1, new Note(76, 75, 3200 + 1600, 150));//E
+        tr.addNote(1, new Note(71, 75, 3350 + 1600, 250));//B
 
         tr.addNote(0, new Note(64, 50, 3200 + 1600, 50)); // E
         tr.addNote(0, new Note(52, 50, 3200 + 1600, 100)); // E
@@ -208,8 +209,8 @@ public class MidiInterface {
         tr.addNote(0, new Note(59, 50, 3550 + 1600, 50));//B
 
         //maat 10
-        tr2.addNote(0, new Note(74, 50, 3600 + 1600, 150));//D
-        tr2.addNote(0, new Note(71, 50, 3750 + 1600, 250));//B
+        tr.addNote(1, new Note(74, 75, 3600 + 1600, 150));//D
+        tr.addNote(1, new Note(71, 75, 3750 + 1600, 250));//B
 
         tr.addNote(0, new Note(62, 50, 3600 + 1600, 50));//D
         tr.addNote(0, new Note(50, 50, 3600 + 1600, 100));//D
@@ -228,8 +229,8 @@ public class MidiInterface {
         tr.addNote(0, new Note(59, 50, 3950 + 1600, 50));//B        
 
         //maat 11
-        tr2.addNote(0, new Note(78, 50, 4000 + 1600, 150));//F
-        tr2.addNote(0, new Note(71, 50, 4150 + 1600, 250));//B
+        tr.addNote(1, new Note(78, 75, 4000 + 1600, 150));//F
+        tr.addNote(1, new Note(71, 75, 4150 + 1600, 250));//B
 
         tr.addNote(0, new Note(62, 50, 4000 + 1600, 50));//D
         tr.addNote(0, new Note(50, 50, 4000 + 1600, 100));//D
@@ -248,8 +249,8 @@ public class MidiInterface {
         tr.addNote(0, new Note(59, 50, 4350 + 1600, 50));//B             
 
         //maat 12
-        tr2.addNote(0, new Note(78, 50, 4400 + 1600, 150));//F
-        tr2.addNote(0, new Note(69, 50, 4550 + 1600, 250));//A
+        tr.addNote(1, new Note(78, 75, 4400 + 1600, 150));//F
+        tr.addNote(1, new Note(69, 75, 4550 + 1600, 250));//A
 
         tr.addNote(0, new Note(62, 50, 4400 + 1600, 50));//D
         tr.addNote(0, new Note(50, 50, 4400 + 1600, 100));//D
@@ -266,6 +267,98 @@ public class MidiInterface {
         tr.addNote(0, new Note(62, 50, 4700 + 1600, 50));//D
         tr.addNote(0, new Note(54, 50, 4700 + 1600, 100));//F#
         tr.addNote(0, new Note(57, 50, 4750 + 1600, 50));//A
+
+        //maat 13
+        tr.addNote(1, new Note(79, 75, 4800 + 1600, 150)); //G
+        tr.addNote(1, new Note(71, 75, 4800 + 1600, 150)); //B
+
+        tr.addNote(1, new Note(76, 75, 4950 + 1600, 250)); //E
+        tr.addNote(1, new Note(67, 75, 4950 + 1600, 250)); //G (1 lager)
+
+        tr.addNote(0, new Note(62, 50, 4800 + 1600, 50));//D
+        tr.addNote(0, new Note(50, 50, 4800 + 1600, 100));//D
+        tr.addNote(0, new Note(57, 50, 4850 + 1600, 50));//A
+
+        tr.addNote(0, new Note(62, 50, 4900 + 1600, 50));//D
+        tr.addNote(0, new Note(54, 50, 4900 + 1600, 100));//F#
+        tr.addNote(0, new Note(57, 50, 4950 + 1600, 50));//A
+
+        tr.addNote(0, new Note(62, 50, 5000 + 1600, 50));//D
+        tr.addNote(0, new Note(50, 50, 5000 + 1600, 100));//D
+        tr.addNote(0, new Note(57, 50, 5050 + 1600, 50));//A
+
+        tr.addNote(0, new Note(62, 50, 5100 + 1600, 50));//D
+        tr.addNote(0, new Note(54, 50, 5100 + 1600, 100));//F#
+        tr.addNote(0, new Note(57, 50, 5150 + 1600, 50));//A
+
+        //maat 14
+        tr.addNote(1, new Note(79, 75, 5200 + 1600, 150)); //G
+        tr.addNote(1, new Note(71, 75, 5200 + 1600, 150)); //B
+
+        tr.addNote(1, new Note(67, 75, 5350 + 1600, 250)); //G
+        tr.addNote(1, new Note(74, 75, 5350 + 1600, 250)); //D
+
+        tr.addNote(0, new Note(62, 50, 5200 + 1600, 50));//D
+        tr.addNote(0, new Note(50, 50, 5200 + 1600, 100));//D
+        tr.addNote(0, new Note(59, 50, 5250 + 1600, 50));//B
+
+        tr.addNote(0, new Note(62, 50, 5300 + 1600, 50));//D
+        tr.addNote(0, new Note(55, 50, 5300 + 1600, 100));//G
+        tr.addNote(0, new Note(59, 50, 5350 + 1600, 50));//B
+
+        tr.addNote(0, new Note(62, 50, 5400 + 1600, 50));//D
+        tr.addNote(0, new Note(50, 50, 5400 + 1600, 100));//D
+        tr.addNote(0, new Note(59, 50, 5450 + 1600, 50));//B
+
+        tr.addNote(0, new Note(62, 50, 5500 + 1600, 50));//D
+        tr.addNote(0, new Note(55, 50, 5500 + 1600, 100));//G
+        tr.addNote(0, new Note(59, 50, 5550 + 1600, 50));//B
+
+        //maat 15
+        tr.addNote(1, new Note(78, 75, 5600 + 1600, 150)); //F#
+        tr.addNote(1, new Note(71, 75, 5600 + 1600, 150)); //B
+
+        tr.addNote(1, new Note(66, 75, 5750 + 1600, 250)); //F#
+        tr.addNote(1, new Note(74, 75, 5750 + 1600, 250)); //D
+
+        tr.addNote(0, new Note(62, 50, 5600 + 1600, 50));//D
+        tr.addNote(0, new Note(50, 50, 5600 + 1600, 100));//D
+        tr.addNote(0, new Note(59, 50, 5650 + 1600, 50));//B
+
+        tr.addNote(0, new Note(62, 50, 5700 + 1600, 50));//D
+        tr.addNote(0, new Note(54, 50, 5700 + 1600, 100));//F#
+        tr.addNote(0, new Note(59, 50, 5750 + 1600, 50));//B
+
+        tr.addNote(0, new Note(62, 50, 5800 + 1600, 50));//D
+        tr.addNote(0, new Note(50, 50, 5800 + 1600, 100));//D
+        tr.addNote(0, new Note(59, 50, 5850 + 1600, 50));//B
+
+        tr.addNote(0, new Note(62, 50, 5900 + 1600, 50));//D
+        tr.addNote(0, new Note(54, 50, 5900 + 1600, 100));//F#
+        tr.addNote(0, new Note(59, 50, 5950 + 1600, 50));//B   
+
+        //maat 16
+        tr.addNote(1, new Note(78, 75, 6000 + 1600, 150)); //F#
+        tr.addNote(1, new Note(71, 75, 6000 + 1600, 150)); //A
+
+        tr.addNote(1, new Note(66, 75, 6150 + 1600, 250)); //F#
+        tr.addNote(1, new Note(74, 75, 6150 + 1600, 250)); //D
+
+        tr.addNote(0, new Note(62, 50, 6000 + 1600, 50));//D
+        tr.addNote(0, new Note(50, 50, 6000 + 1600, 100));//D
+        tr.addNote(0, new Note(57, 50, 6050 + 1600, 50));//A
+
+        tr.addNote(0, new Note(62, 50, 6100 + 1600, 50));//D
+        tr.addNote(0, new Note(54, 50, 6100 + 1600, 100));//F#
+        tr.addNote(0, new Note(57, 50, 6150 + 1600, 50));//A
+
+        tr.addNote(0, new Note(62, 50, 6200 + 1600, 50));//D
+        tr.addNote(0, new Note(50, 50, 6200 + 1600, 100));//D
+        tr.addNote(0, new Note(57, 50, 6250 + 1600, 50));//A
+
+        tr.addNote(0, new Note(62, 50, 6300 + 1600, 50));//D
+        tr.addNote(0, new Note(54, 50, 6300 + 1600, 100));//F#
+        tr.addNote(0, new Note(57, 50, 6350 + 1600, 50));//A
 /*
          for (int i = 0; i < 3; i++) {
          ArrayList<Note> notes = new ArrayList<>();

@@ -71,23 +71,6 @@ public class MidiTrack {
     }
 
     /**
-     * Adds a ShortMessage to the track. A ShortMessage is used to do Note
-     * ON/OFF commands for example.
-     *
-     * @param command
-     * @param data1
-     * @param data2
-     * @param tick
-     * @throws InvalidMidiDataException
-     */
-    private void addShortMessage(int command, int data1, int data2, long tick) throws InvalidMidiDataException {
-        ShortMessage message = new ShortMessage();
-        message.setMessage((byte) command, (byte) data1, (byte) data2);
-        MidiEvent evt = new MidiEvent(message, (long) tick);
-        track.add(evt);
-    }
-
-    /**
      * Adds a note to this channel. Requires a Note and a channel. Function
      * creates a shortMessage with a NoteON and NoteOFF command. User only needs
      * to specify the Note containing the required parameters.
@@ -97,8 +80,12 @@ public class MidiTrack {
      */
     public void addNote(int channel, Note note) {
         try {
-            track.add(new MidiEvent(new ShortMessage(ShortMessage.NOTE_ON, channel, note.getNote(), note.getVelocity()), (long) note.getStartTick()));
-            track.add(new MidiEvent(new ShortMessage(ShortMessage.NOTE_OFF, channel, note.getNote(), note.getVelocity()), (long) note.getStartTick() + note.getDuration()));
+            track.add(new MidiEvent(new ShortMessage(ShortMessage.NOTE_ON, 
+                    channel, note.getNote(), note.getVelocity()), 
+                    (long) note.getStartTick()));
+            track.add(new MidiEvent(new ShortMessage(ShortMessage.NOTE_OFF, 
+                    channel, note.getNote(), note.getVelocity()), 
+                    (long) note.getStartTick() + note.getDuration()));
         } catch (InvalidMidiDataException ex) {
             System.out.println("Error in addNote." + ex.getMessage());
         }
@@ -106,7 +93,8 @@ public class MidiTrack {
 
     /**
      * Creates a MetaEvent to set the name of the track.
-     * @param trackName 
+     *
+     * @param trackName
      */
     private void setTrackName(String trackName) {
         try {
@@ -120,23 +108,24 @@ public class MidiTrack {
     }
 
     /**
-     * Changes the program of a channel.
-     * For example to change an instrument to PIANO.
+     * Changes the program of a channel. For example to change an instrument to
+     * PIANO.
+     *
      * @param channel
-     * @param program 
+     * @param instrument
+     * @param tick
      */
-    public void changeProgram(int channel, int program) {
+    public void changeInstrument(int channel, int instrument, long tick) {
         try {
-            this.addShortMessage(0xC0, channel, program, 0);
+            track.add(new MidiEvent(new ShortMessage(ShortMessage.PROGRAM_CHANGE, channel, instrument, 0), tick));
         } catch (InvalidMidiDataException ex) {
-            System.out.println("Invalid data was entered! " + ex.getMessage());
+            System.out.println("Error in add instrument: " + ex.getMessage());
         }
     }
 
     /**
-     * Calls a MetaMessage indicating that the track has ended.
-     * Called when a writeToFile was called.
-     * 0x2F => end of track
+     * Calls a MetaMessage indicating that the track has ended. Called when a
+     * writeToFile was called. 0x2F => end of track
      */
     public void close() {
         byte[] byteArray = {};
