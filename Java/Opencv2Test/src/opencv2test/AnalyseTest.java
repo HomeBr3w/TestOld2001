@@ -35,7 +35,7 @@ public class AnalyseTest
             img = Highgui.imread("/Users/jasper/Desktop/img.jpg");
         }
         HeightDetectTest program = new HeightDetectTest();
-        Analyse.getNoteCenter(img);
+        //Analyse.getNoteCenter(img);
         Opencv2Test.showResult(img);
     }
 

@@ -47,7 +47,7 @@ public class Matcher {
     private MatchResult compareImage(ClassifierImage ci, Mat image) {
         ClassifierImage source = new ClassifierImage("sourceimg", image, -1);
         float error = ci.compare(source);
-        return new MatchResult(error, ci, source.getImage());
+        return new MatchResult(error, ci, source);
     }
 
     public void addImage(String imageName, Mat image, int noteDuration) {
