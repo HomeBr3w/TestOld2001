@@ -15,6 +15,7 @@ import org.opencv.core.Mat;
 public class ClassifierImage
 {
     private static final boolean DEBUG_VAL = false;
+    private final int[] cutOffValues;
     private final String imageName;
     private final Mat image;
     private final float heightWidthRatio;
@@ -33,7 +34,9 @@ public class ClassifierImage
     public ClassifierImage(String name, Mat image, float noteDuration)
     {
         this.imageName = name;
-        this.image = Analyse.isolateImage(Analyse.deleteWhiteRows(image));
+        Analyse.IsolateResult res = Analyse.isolateImage(image);//with deletewiterows ??
+        this.image = res.result;
+        this.cutOffValues = res.results;
         this.heightWidthRatio = Analyse.getHeightWidthRatio(this.image);
         this.blackPercentage = Analyse.getBlackPercentage(this.image);
         this.topDownRatio = blackPercentage.get(0) / blackPercentage.get(1);
@@ -154,7 +157,7 @@ public class ClassifierImage
         }
 
         //System.out.println("========================================== END");
-        //System.out.println("VVD DING: " + toCompare.getBlackPercentage().get(0) + " " + toCompare.getBlackPercentage().get(1));
+        //System.out.println("CURRENT: " + toCompare.getBlackPercentage().get(0) + " " + toCompare.getBlackPercentage().get(1));
         //System.out.println("ORIG: " + blackPercentage.get(0) + " " + blackPercentage.get(1));
         return error;
     }
@@ -162,5 +165,10 @@ public class ClassifierImage
     public float getDuration()
     {
         return noteDuration;
+    }
+
+    public int[] getCutOffValues()
+    {
+        return cutOffValues;
     }
 }

@@ -12,7 +12,6 @@ import javax.imageio.ImageIO;
 import opencv2test.MainWindow;
 import opencv2test.Opencv2Test;
 import opencv2test.Support.MatchResult;
-import opencv2test.Support.Note;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
@@ -25,34 +24,60 @@ import org.opencv.imgproc.Imgproc;
 
 public class Analyse
 {
-
-    public static int[] getNoteCenter(Mat image)
-    {
-        int[] results = new int[2];
-        Dilate(image, 1, 0);
-        return results;
-    }
-
+    /**
+     * Convert an image to a "greyscale"-image.
+     *
+     * @param img
+     * @return
+     */
     public static Mat convertToGrey(Mat img)
     {
         Imgproc.cvtColor(img, img, 7);
         return img;
     }
 
-    public static int getNoteHeight(Mat singleBar, ArrayList<ArrayList<Integer>> noteList, Mat image, int gLocation)
-    {
-        int y = -1;
+    /**
+     * Function which determines the MIDI-note-height
+     *
+     * @param sourceImage
+     * @param gLocation
+     * @return
+     */
+    public static int getNoteHeight(ClassifierImage sourceImage, int gLocation)
+    {/*
+        int rows = 10;
+        int rowLocation = -1;
         int heightBar = singleBar.rows();
-        int[] center = getNoteCenter(image);
-
-        return (y / heightBar);
+        int[] cutOffValues = sourceImage.getCutOffValues();
+        rowLocation = cutOffValues[0] + getCenterOfNote();
+        rowLocation = (rowLocation / heightBar) * rows;
+*/
+        return -1;
+    }
+    
+    public static int getG(Mat singleBar, ArrayList<Integer> noteToFind, ClassifierImage resultImage)
+    {
+        return -1;
     }
 
+    /**
+     * Threshold on darkpixels.
+     * Dark will become black and light pixels will be white.
+     *
+     * @param src
+     * @param trg
+     */
     public static void thresholdISOBlack(Mat src, Mat trg)
     {
         Imgproc.threshold(src, trg, 150, 255, 0);
     }
 
+    /**
+     * Function to print an image in the console.
+     * ASCII-purists have fun!
+     *
+     * @param bron
+     */
     public static void printImage(Mat bron)
     {
         for (int r = 0; r < bron.rows(); r++)
@@ -65,6 +90,11 @@ public class Analyse
         }
     }
 
+    /**
+     *
+     * @param bron
+     * @return
+     */
     public static Mat averageRows(Mat bron)
     {
         Mat rowCounted = new Mat(bron.rows(), 1, 16);
@@ -87,6 +117,11 @@ public class Analyse
         return rowCounted;
     }
 
+    /**
+     *
+     * @param bron
+     * @return
+     */
     public static Mat averageCols(Mat bron)
     {
         Mat colCounted = new Mat(100, bron.cols(), 16);
@@ -114,6 +149,13 @@ public class Analyse
         return colCounted;
     }
 
+    /**
+     * Finds blobs in the horizontal direction.
+     * In our case, this is the noteBar.
+     *
+     * @param bron
+     * @return
+     */
     public static ArrayList<ArrayList<Integer>> oneDimensionalHorizontalBlobFinder(Mat bron)
     {
         ArrayList<Integer> found = new ArrayList<>();
@@ -168,6 +210,13 @@ public class Analyse
         return blobList;
     }
 
+    /**
+     * Finds blobs in the vertical direction.
+     * In this case these are the notes and stuff.
+     *
+     * @param bron
+     * @return
+     */
     public static ArrayList<ArrayList<Integer>> oneDimensionalVerticalBlobFinder(Mat bron)
     {
         ArrayList<ArrayList<Integer>> list = new ArrayList<>();
@@ -214,6 +263,13 @@ public class Analyse
         return list;
     }
 
+    /**
+     * Erosion done on the WHITE-pixels of an image.
+     *
+     * @param bron
+     * @param erosionSize
+     * @param erosionType
+     */
     public static void Erosion(Mat bron, int erosionSize, int erosionType)
     {
         Mat element = Imgproc.getStructuringElement(erosionType,
@@ -223,6 +279,13 @@ public class Analyse
         Imgproc.erode(bron, bron, element);
     }
 
+    /**
+     * Dilation done on the WHITE-pixels of an image.
+     *
+     * @param bron
+     * @param dilation_size
+     * @param dilation_type
+     */
     public static void Dilate(Mat bron, int dilation_size, int dilation_type)
     {
         Mat element = Imgproc.getStructuringElement(dilation_type,
@@ -271,6 +334,12 @@ public class Analyse
         return nw;
     }
 
+    /**
+     * Draw lines for each found noteBar.
+     *
+     * @param blobList
+     * @param img
+     */
     public static void drawOneDimensionalBlobsHorizontal(ArrayList<ArrayList<Integer>> blobList, Mat img)
     {
         for (int i = 0; i < blobList.size(); i++)
@@ -296,6 +365,12 @@ public class Analyse
         }
     }
 
+    /**
+     * Draw a line around each found blob, in this case the notes / stuff found on the bars.
+     *
+     * @param blobList
+     * @param img
+     */
     public static void drawOneDimensionalBlobsVertical(ArrayList<ArrayList<Integer>> blobList, Mat img)
     {
         Mat cropped = img.clone();
@@ -313,6 +388,16 @@ public class Analyse
         }
     }
 
+    /**
+     * Function which loops through all given blobcoordinates given in the
+     * parameter noteList and determines which blob matches a blob in the matcher.
+     * Results are returned in an Arraylist with MatchResult(s)
+     *
+     * @param noteBar
+     * @param noteList
+     * @param blobMatcher
+     * @return
+     */
     public static ArrayList<MatchResult> matchBlobs(Mat noteBar, ArrayList<ArrayList<Integer>> noteList, Matcher blobMatcher)
     {
         ArrayList<MatchResult> notes = new ArrayList<>();
@@ -328,6 +413,16 @@ public class Analyse
         return notes;
     }
 
+    /**
+     * Checks in the classifier which blob is the perfect match for the notes.
+     * Requires a Notebar and the coordinates of the to-match blob.
+     * Also requires a blobMatcher to match this image with.
+     * Shows best match.
+     *
+     * @param noteBar
+     * @param noteToFind
+     * @param blobMatcher
+     */
     public static void matchBlob(Mat noteBar, ArrayList<Integer> noteToFind, Matcher blobMatcher)
     {
         Mat cropped = noteBar.clone();
@@ -335,9 +430,17 @@ public class Analyse
         cropped = cropped.submat(roi);
         MatchResult result = blobMatcher.matchImage(cropped);
         System.out.println("NOTE) Result: " + result.getCompared().getName() + " Error: " + result.getError());
-        Opencv2Test.showResult(result.getImage());
+        Opencv2Test.showResult(result.getImage().getImage());
     }
 
+    /**
+     * Function to get all "Notes" from the specified list of blobLocations given by the argument
+     * blobList. Also requires the 'bar' to be read from.
+     *
+     * @param blobList
+     * @param img
+     * @return
+     */
     public static ArrayList<Mat> getROIperBlob(ArrayList<ArrayList<Integer>> blobList, Mat img)
     {
         ArrayList<Mat> rois = new ArrayList<>();
@@ -362,19 +465,19 @@ public class Analyse
     }
 
     /**
-     * Removes whitespace from the image
+     * Removes whitespace from the image and therefore isolates the image
      *
      * @param source
      * @return
      */
-    public static Mat isolateImage(Mat source)
+    public static IsolateResult isolateImage(Mat source)
     {
         int leftmost = -1;
         int rightmost = -1;
         int topmost = -1;
         int botmost = -1;
 
-        //System.out.println("ROWS: " + source.rows() + " Cols: " + source.cols());
+        //System.out.println("Width BEFORE: " + source.cols() + " Height BEFORE: " + source.rows());
         //source = Analyse.convertToGrey(source);
         for (int y = 0; y < source.rows(); y++)
         {
@@ -403,10 +506,32 @@ public class Analyse
         }
         //System.out.println("Bounds: { L:" + leftmost + ", T:" + topmost + ", R:" + rightmost + ", B:" + botmost + " }");
         Rect roi = new Rect(leftmost, topmost, rightmost - leftmost + 1, botmost - topmost + 1);
+        int[] results = new int[4];
+        results[0] = topmost;
+        results[1] = source.rows() - 1 - botmost;
+        results[2] = leftmost;
+        results[3] = source.cols() - 1 - rightmost;
+        //System.out.println("TopCut: " + results[0] + " BottomCut: " + results[1] + " LeftCut: " + results[2] + " RightCut: " + results[3]);
+
         Mat result = source.submat(roi);
-        return result;
+
+        //System.out.println("SanityCheck: " + (source.cols() - results[2] - results[3] == result.cols()) + " " + (source.rows() - results[0] - results[1] == result.rows()));
+        //Highgui.imwrite("appel.jpg", result);
+        //System.out.println("Width AFTER: " + result.cols() + " Height AFTER: " + result.rows());
+        return new IsolateResult(result, results);
     }
 
+    /**
+     * Gets the amount of blackpixels (in percentage) of the specified image
+     * Returns a list with the following results:
+     * at index 0 -> topBlackPixel-percentage (percentage black pixels of the
+     * until the height / 2 -th row.
+     * at index 1 -> bottomBlackPixel-percentage (percentage black pixels of the bottom rows, height / 2 until height.
+     * at index 2 -> total amount of blackpixels (percentage)
+     *
+     * @param image
+     * @return
+     */
     public static ArrayList<Float> getBlackPercentage(Mat image)
     {
 
@@ -449,6 +574,15 @@ public class Analyse
         return blackPercentage;
     }
 
+    /**
+     * Removes whitespaces from the image.
+     * IsolateImage does the same, with a few more additions.
+     * Therefore deprecated.
+     *
+     * @param src
+     * @return
+     */
+    @Deprecated
     public static Mat deleteWhiteRows(Mat src)
     {
         Mat dst = src.clone();
@@ -476,6 +610,14 @@ public class Analyse
         return dst.submat(new Rect(0, 0, dst.cols(), rindex));
     }
 
+    /**
+     * Rotates an image with an amount of degrees.
+     * Result is stored in dst.
+     *
+     * @param src
+     * @param angle
+     * @param dst
+     */
     public static void rotate(Mat src, double angle, Mat dst)
     {
         int len = Math.max(src.cols(), src.rows());
@@ -485,11 +627,26 @@ public class Analyse
         Imgproc.warpAffine(src, dst, r, new Size(len, len));
     }
 
+    /**
+     * Gets the HeightWidthRatio of an image.
+     * Done by dividing the cols by the rows.
+     *
+     * @param image
+     * @return
+     */
     public static float getHeightWidthRatio(Mat image)
     {
         return (float) image.cols() / (float) image.rows();
     }
 
+    /**
+     * Fancy algorithm to determine the rotation on a line.
+     * Angle is returned in a double
+     *
+     * @param centerPt
+     * @param targetPt
+     * @return
+     */
     public static double calcRotationAngleInDegrees(Point centerPt, Point targetPt)
     {
         double theta = Math.atan2(targetPt.y - centerPt.y, targetPt.x - centerPt.x);
@@ -506,6 +663,13 @@ public class Analyse
         return angle;
     }
 
+    /**
+     * Create a bufferedImage from a Mat-image
+     * To send by network (RMI)
+     *
+     * @param img
+     * @return
+     */
     public static BufferedImage getBufferedImgFromMat(Mat img)
     {
         MatOfByte matOfByte = new MatOfByte();
@@ -526,6 +690,12 @@ public class Analyse
         return bufImage;
     }
 
+    /**
+     * Conversion of a BufferedImage to Mat
+     *
+     * @param bi
+     * @return
+     */
     public static Mat getMatFromBufferedImage(BufferedImage bi)
     {
         Mat im = new Mat(bi.getHeight(), bi.getWidth(), 7);
@@ -535,6 +705,13 @@ public class Analyse
         return im;
     }
 
+    /**
+     * Encryption method to "encrypt" an image to random data.
+     *
+     * @param img
+     * @param print
+     * @return
+     */
     public static String encryptImage(Mat img, boolean print)
     {
         int icount = 0;
@@ -619,6 +796,12 @@ public class Analyse
         return buffer;
     }
 
+    /**
+     * Decrypt function to convert random data to an image.
+     *
+     * @param buffer
+     * @return
+     */
     public static Mat decryptImage(String buffer)
     {
         String[] imgSplit = buffer.split("#");
@@ -690,5 +873,22 @@ public class Analyse
             }
         }
         return result;
+    }
+
+    /**
+     *
+     * Class to wrap the results of isolate image.
+     * Since java is unable to pass values by reference.
+     */
+    public static class IsolateResult
+    {
+        public final Mat result;
+        public final int[] results;
+
+        public IsolateResult(Mat result, int[] results)
+        {
+            this.result = result;
+            this.results = results;
+        }
     }
 }

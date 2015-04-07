@@ -91,18 +91,20 @@ public class HeightDetectTest
             ArrayList<ArrayList<Integer>> noteList = Analyse.oneDimensionalVerticalBlobFinder(Analyse.averageCols(filteredImage));
             ArrayList<MatchResult> results = Analyse.matchBlobs(filteredImage, noteList, matcher);
             ArrayList<Note> notes = new ArrayList<>();
+            
             /*
              Match all the images and create notes.
              */
+            
+            ArrayList<Integer> sharps = new ArrayList<>();
+            ArrayList<Integer> flats = new ArrayList<>();
+            int keyLocation = -1;
             for (MatchResult r : results)
             {
-                ArrayList<Integer> sharps = new ArrayList<>();
-                ArrayList<Integer> flats = new ArrayList<>();
-                int keyLocation = -2;
                 float duration = r.getCompared().getDuration() * 100f;
                 if (duration > 0)
                 {
-                    int noteHeight = Analyse.getNoteHeight(singleBar, noteList, r.getCompared().getImage(), keyLocation);
+                    int noteHeight = Analyse.getNoteHeight(r.getImage(), keyLocation);
                     Note toAdd = new Note(noteHeight, 120, currentTick, (int) duration);
                     if (sharps.contains(toAdd.getNote()))
                     {
@@ -117,6 +119,7 @@ public class HeightDetectTest
                     System.out.println("Adding " + r.getCompared().getName() + " at tick: " + currentTick + " with duration: " + duration);
                     currentTick += (int) duration;
                 }
+                //Apply a point to the last known note
                 if ("stip".equals(r.getCompared().getName()) && notes.size() > 0)
                 {
                     Note toPoint = notes.get(notes.size() - 1);
@@ -124,13 +127,20 @@ public class HeightDetectTest
                     toPoint.applyPoint();
                     duration += toPoint.getDuration();
                 }
+                //If there is a key-note, set the keyLocation to the specified key.
                 else if ("sleutel".equals(r.getCompared().getName()))
                 {
-                    keyLocation = Analyse.getNoteHeight(singleBar, noteList, r.getCompared().getImage(), -1);
+                    keyLocation = Analyse.getNoteHeight(r.getImage(), -1);
                 }
+                //If there is a sharp on this location, apply a sharp to this row
                 else if ("#".equals(r.getCompared().getName()))
                 {
-                    sharps.add(Analyse.getNoteHeight(singleBar, noteList, r.getCompared().getImage(), -1));
+                    sharps.add(Analyse.getNoteHeight(r.getImage(), -1));
+                }
+                //Apply flats if neccessary
+                else if ("mol".equals(r.getCompared().getName()))
+                {
+                    flats.add(Analyse.getNoteHeight(r.getImage(), -1));
                 }
             }
             //Add all notes to the track.
