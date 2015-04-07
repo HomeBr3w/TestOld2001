@@ -6,7 +6,6 @@
 package opencv2test.Support;
 
 import opencv2test.Core.ClassifierImage;
-import org.opencv.core.Mat;
 
 /**
  *
@@ -43,7 +42,7 @@ public class MatchResult {
      * Returns the image which is compared to the classifierImage
      * @return 
      */
-    public ClassifierImage getImage() {
+    public ClassifierImage getSourceImage() {
         return toBeChecked;
     }
 

@@ -40,24 +40,70 @@ public class Analyse
      * Function which determines the MIDI-note-height
      *
      * @param sourceImage
+     * @param barHeight
      * @param gLocation
      * @return
      */
-    public static int getNoteHeight(ClassifierImage sourceImage, int gLocation)
+    public static int getNoteHeight(ClassifierImage sourceImage, float barHeight, int gLocation)
     {/*
-        int rows = 10;
-        int rowLocation = -1;
-        int heightBar = singleBar.rows();
+         int rows = 10;
+         int rowLocation = -1;
+         int heightBar = singleBar.rows();
+         int[] cutOffValues = sourceImage.getCutOffValues();
+         rowLocation = cutOffValues[0] + getCenterOfNote();
+         rowLocation = (rowLocation / heightBar) * rows;
+         */
+        float rows = 20;
+        int gValue = 68; //MIDI-declaration
         int[] cutOffValues = sourceImage.getCutOffValues();
-        rowLocation = cutOffValues[0] + getCenterOfNote();
-        rowLocation = (rowLocation / heightBar) * rows;
-*/
-        return -1;
+        int noteCenter = getThickestRowIndex(sourceImage.getImage());
+        float noteLocation = cutOffValues[0] + noteCenter;
+        noteLocation = ((noteLocation / barHeight) * rows);
+        noteLocation = Math.round(noteLocation);
+        
+        int noteHeight = gValue - (((int)noteLocation - gLocation) * 2); //Formula to get the right midi-note
+        return noteHeight;
     }
-    
-    public static int getG(Mat singleBar, ArrayList<Integer> noteToFind, ClassifierImage resultImage)
+
+    /**
+     * 
+     * @param sourceImage
+     * @param barHeight
+     * @return 
+     */
+    public static int getGLocation(ClassifierImage sourceImage, int barHeight)
     {
-        return -1;
+        return 12;
+    }
+
+    /**
+     * Gets the row (index) where the image has the most black parts.
+     * This is equal to the center of the note.
+     * @param image
+     * @return 
+     */
+    public static int getThickestRowIndex(Mat image)
+    {
+        int thickestRowIndex = -1;
+        int maxRowThickness = 0;
+        int currentRowThickness = 0;
+        for (int r = 0; r < image.rows(); r++)
+        {
+            for (int c = 0; c < image.cols(); c++)
+            {
+                if (image.get(r, c)[0] < 127)
+                {
+                    currentRowThickness++;
+                }
+            }
+            if (currentRowThickness > maxRowThickness)
+            {
+                thickestRowIndex = r;
+                maxRowThickness = currentRowThickness;
+            }
+            currentRowThickness = 0;
+        }
+        return thickestRowIndex;
     }
 
     /**
@@ -422,15 +468,16 @@ public class Analyse
      * @param noteBar
      * @param noteToFind
      * @param blobMatcher
+     * @return 
      */
-    public static void matchBlob(Mat noteBar, ArrayList<Integer> noteToFind, Matcher blobMatcher)
+    public static MatchResult matchBlob(Mat noteBar, ArrayList<Integer> noteToFind, Matcher blobMatcher)
     {
         Mat cropped = noteBar.clone();
         Rect roi = new Rect(noteToFind.get(0), 5, noteToFind.get(1) - noteToFind.get(0), noteBar.rows() - 5);
         cropped = cropped.submat(roi);
         MatchResult result = blobMatcher.matchImage(cropped);
         System.out.println("NOTE) Result: " + result.getCompared().getName() + " Error: " + result.getError());
-        Opencv2Test.showResult(result.getImage().getImage());
+        return result;
     }
 
     /**

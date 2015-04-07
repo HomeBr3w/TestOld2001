@@ -12,6 +12,7 @@ import opencv2test.Core.Analyse;
 import opencv2test.Core.ClassifierImage;
 import opencv2test.Core.Matcher;
 import static opencv2test.Opencv2Test.showResult;
+import opencv2test.Support.MatchResult;
 import org.opencv.core.Mat;
 import org.opencv.highgui.Highgui;
 
@@ -61,11 +62,19 @@ public class SingleNoteDetectionClass
         Mat b = bars.get(0); //1de balk
         Mat filteredImage = Analyse.filterDifference(b, Analyse.averageRows(b));
         ArrayList<ArrayList<Integer>> noteList = Analyse.oneDimensionalVerticalBlobFinder(Analyse.averageCols(filteredImage));
-        ArrayList<Integer> noteToFind = noteList.get(15); // 11e plaatje
-        Analyse.matchBlob(filteredImage, noteToFind, matcher);
+        ArrayList<Integer> noteToFind = noteList.get(3); // 4e plaatje
+        MatchResult r = Analyse.matchBlob(filteredImage, noteToFind, matcher);
+
+        int result = Analyse.getNoteHeight(r.getSourceImage(), b.rows(), 12);
+        System.out.println("Note height: " + result);
 
         showResult(filteredImage);
+        showResult(r.getSourceImage().getImage());
+        
+        //Teken gevonden blobs
+        Analyse.drawOneDimensionalBlobsHorizontal(blobList, img);
 
+        showResult(img);
     }
 
     private void init()
