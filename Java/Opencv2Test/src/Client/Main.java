@@ -40,7 +40,7 @@ public class Main extends javax.swing.JFrame {
     /**
      * Creates new form Main
      */
-    public Main() throws RemoteException {
+    public Main() {
         initComponents();
         
         try {
@@ -48,8 +48,6 @@ public class Main extends javax.swing.JFrame {
         } catch (NotBoundException | MalformedURLException | RemoteException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        System.out.println(RMISERV.version());
     }
     
     RmiServerIntf RMISERV;
@@ -134,8 +132,7 @@ public class Main extends javax.swing.JFrame {
         int w = img.getWidth();
         int h = img.getHeight();
         
-        String result = RMISERV.Rotate(encryptBufferedImage(img, false), (double)window.dlstate.rotation);
-        img = decryptBufferedImage(result);
+        img = RMISERV.Rotate(img, (double)window.dlstate.rotation);
                 
         window2 = new DrawBoxState("Mark the area's to keep. Left click-drag to mark. Right click to remove.");
         window2.img = img;
@@ -167,7 +164,6 @@ public class Main extends javax.swing.JFrame {
 
     private BufferedImage img;
     private ArrayList<Integer> t;
-    private File imgf;
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -434,10 +430,10 @@ public class Main extends javax.swing.JFrame {
                 chooser.getSelectedFile().getPath());
         }
         pathfound.setText(chooser.getSelectedFile().getName());
-        imgf = chooser.getSelectedFile();
+
         
         try {
-            img = ImageIO.read(imgf);
+            img = ImageIO.read(chooser.getSelectedFile());
         } catch (IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -535,124 +531,9 @@ public class Main extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                try {
-                    new Main().setVisible(true);
-                } catch (RemoteException ex) {
-                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                new Main().setVisible(true);
             }
         });
-    }
-    
-    public static String encryptBufferedImage(BufferedImage img, boolean print) {
-        int icount = 0;
-        int ocount = 0;
-        String buffer = "";
-        buffer += img.getType() + "#";
-        for (int r = 0; r < img.getHeight(); r++) {
-            for (int c = 0; c < img.getWidth(); c++) {
-                if (img.getRGB(c, r) < 127) {
-                    if (icount > 0) {
-                        if (icount == 1) {
-                            buffer += "|";
-                        } else {
-                            buffer += icount + "|";
-                        }
-                        icount = 0;
-                    }
-                    ocount++;
-                } else {
-                    if (ocount > 0) {
-                        if (ocount == 1) {
-                            buffer += ".";
-                        } else {
-                            buffer += ocount + ".";
-                        }
-                        ocount = 0;
-                    }
-                    icount++;
-                }
-            }
-            if (icount > 0) {
-                if (icount == 1) {
-                    buffer += "|";
-                } else {
-                    buffer += icount + "|";
-                }
-            }
-            if (ocount > 0) {
-                if (ocount == 1) {
-                    buffer += ".";
-                } else {
-                    buffer += ocount + ".";
-                }
-            }
-            ocount = 0;
-            icount = 0;
-            buffer += "-";
-        }
-        if (print) {
-            for (int i = 1; i < buffer.length() + 1; i++) {
-                System.out.print(buffer.charAt(i - 1));
-                if (i % 60 == 0) {
-                    System.out.println();
-                }
-            }
-            System.out.println();
-        }
-        return buffer;
-    }
-
-    public static BufferedImage decryptBufferedImage(String buffer) {
-        String[] imgSplit = buffer.split("#");
-        int type = Integer.parseInt(imgSplit[0]);
-        String[] lines = imgSplit[1].split("-");
-        ArrayList<ArrayList<Integer>> totalRows = new ArrayList<>();
-        for (String s : lines) {
-            String cached = "";
-            ArrayList<Integer> row = new ArrayList<>();
-            for (int i = 0; i < s.length(); i++) {
-                if (s.charAt(i) == '.') {
-                    int count = 0;
-                    try {
-                        count = Integer.parseInt(cached);
-                    } catch (Exception ex) {
-                        count = 1;
-                    }
-
-                    for (int c = 0; c < count; c++) {
-                        row.add(0);
-                    }
-                    cached = "";
-                } else if (s.charAt(i) == '|') {
-                    int count = 0;
-                    try {
-                        count = Integer.parseInt(cached);
-                    } catch (Exception ex) {
-                        count = 1;
-                    }
-                    for (int c = 0; c < count; c++) {
-                        row.add(1);
-                    }
-                    cached = "";
-                } else {
-                    cached += s.charAt(i);
-                }
-
-            }
-            totalRows.add(row);
-        }
-        int height = totalRows.size();
-        int width = totalRows.get(0).size();
-        BufferedImage result = new BufferedImage(width, height, type);
-        for (int y = 0; y < totalRows.size(); y++) {
-            ArrayList<Integer> row = totalRows.get(y);
-            for (int x = 0; x < row.size(); x++) {
-                int resX = row.get(x) * 254;
-                result.setRGB(x, y, resX);
-            }
-        }
-        return result;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
