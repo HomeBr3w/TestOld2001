@@ -1,8 +1,10 @@
 package opencv2test.Core;
 
+import Client.Main;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -10,9 +12,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import opencv2test.MainWindow;
-import opencv2test.Opencv2Test;
 import opencv2test.Support.MatchResult;
 import org.opencv.core.Core;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
 import org.opencv.core.Point;
@@ -410,13 +412,43 @@ public class Analyse {
    
     public static Mat getMatFromBufferedImage (BufferedImage bi)
     {
-        Mat im = new Mat(bi.getHeight(), bi.getWidth(), 7);
-        byte[] pixels = ((DataBufferByte) bi.getRaster().getDataBuffer()).getData();
-        im.put(0, 0, pixels);
+        Mat im = new Mat(bi.getHeight(), bi.getWidth(), CvType.CV_32F);
+        im.setTo(new Scalar(0.0, 0.0, 0.0));
+        
+        for (int r = 0; r < im.rows(); r++)
+        {
+            for (int c = 0; c < im.cols(); c++)
+            {
+                im.put(r, c, new double[]{bi.getRGB(c, r),bi.getRGB(c, r),bi.getRGB(c, r)});
+                System.out.print(bi.getRGB(c, r) + " ");
+            }
+            System.out.println("");
+        }
         
         return im;
     }
     
+    public static BufferedImage getBufferedImageFromFile (File f)
+    {
+        BufferedImage img = null; 
+        try {
+            img = ImageIO.read(f);
+        } catch (IOException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return img;
+    }
+    
+    public static File getFileFromBufferedImage (BufferedImage bi)
+    {
+        File outputfile = new File("image.jpg");
+        try {
+            ImageIO.write(bi, "jpg", outputfile);
+        } catch (IOException ex) {
+            Logger.getLogger(Analyse.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return outputfile;
+    }
 
     public static String encryptImage(Mat img, boolean print) {
         int icount = 0;
@@ -524,6 +556,117 @@ public class Analyse {
             for (int x = 0; x < row.size(); x++) {
                 int resX = row.get(x) * 254;
                 result.put(y, x, new double[]{resX, resX, resX});
+            }
+        }
+        return result;
+    }
+    
+    public static String encryptBufferedImage(BufferedImage img, boolean print) {
+        int icount = 0;
+        int ocount = 0;
+        String buffer = "";
+        buffer += img.getType() + "#";
+        for (int r = 0; r < img.getHeight(); r++) {
+            for (int c = 0; c < img.getWidth(); c++) {
+                if (img.getRGB(c, r) < 127) {
+                    if (icount > 0) {
+                        if (icount == 1) {
+                            buffer += "|";
+                        } else {
+                            buffer += icount + "|";
+                        }
+                        icount = 0;
+                    }
+                    ocount++;
+                } else {
+                    if (ocount > 0) {
+                        if (ocount == 1) {
+                            buffer += ".";
+                        } else {
+                            buffer += ocount + ".";
+                        }
+                        ocount = 0;
+                    }
+                    icount++;
+                }
+            }
+            if (icount > 0) {
+                if (icount == 1) {
+                    buffer += "|";
+                } else {
+                    buffer += icount + "|";
+                }
+            }
+            if (ocount > 0) {
+                if (ocount == 1) {
+                    buffer += ".";
+                } else {
+                    buffer += ocount + ".";
+                }
+            }
+            ocount = 0;
+            icount = 0;
+            buffer += "-";
+        }
+        if (print) {
+            for (int i = 1; i < buffer.length() + 1; i++) {
+                System.out.print(buffer.charAt(i - 1));
+                if (i % 60 == 0) {
+                    System.out.println();
+                }
+            }
+            System.out.println();
+        }
+        return buffer;
+    }
+
+    public static BufferedImage decryptBufferedImage(String buffer) {
+        String[] imgSplit = buffer.split("#");
+        int type = Integer.parseInt(imgSplit[0]);
+        String[] lines = imgSplit[1].split("-");
+        ArrayList<ArrayList<Integer>> totalRows = new ArrayList<>();
+        for (String s : lines) {
+            String cached = "";
+            ArrayList<Integer> row = new ArrayList<>();
+            for (int i = 0; i < s.length(); i++) {
+                if (s.charAt(i) == '.') {
+                    int count = 0;
+                    try {
+                        count = Integer.parseInt(cached);
+                    } catch (Exception ex) {
+                        count = 1;
+                    }
+
+                    for (int c = 0; c < count; c++) {
+                        row.add(0);
+                    }
+                    cached = "";
+                } else if (s.charAt(i) == '|') {
+                    int count = 0;
+                    try {
+                        count = Integer.parseInt(cached);
+                    } catch (Exception ex) {
+                        count = 1;
+                    }
+                    for (int c = 0; c < count; c++) {
+                        row.add(1);
+                    }
+                    cached = "";
+                } else {
+                    cached += s.charAt(i);
+                }
+
+            }
+            totalRows.add(row);
+        }
+        int height = totalRows.size();
+        int width = totalRows.get(0).size();
+        BufferedImage result = new BufferedImage(width, height, type);
+        for (int y = 0; y < totalRows.size(); y++) {
+            ArrayList<Integer> row = totalRows.get(y);
+            for (int x = 0; x < row.size(); x++) {
+                int resX = row.get(x) * 254;
+                result.setRGB(x, y, resX);
             }
         }
         return result;

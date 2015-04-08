@@ -31,10 +31,17 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerIntf
     }
     
     @Override
-    public BufferedImage Rotate(BufferedImage Source, double Degrees) throws RemoteException {
-        Mat img = Analyse.getMatFromBufferedImage(Source);
+    public String Rotate(String Source, double Degrees) throws RemoteException {
+        System.out.println("start");
+        BufferedImage imgb = Analyse.decryptBufferedImage(Source);
+        System.out.println("converted");
+        Mat img = Analyse.getMatFromBufferedImage(imgb);
+        System.out.println("mat made");
         Analyse.rotate(img, Degrees, img);
-        return Analyse.getBufferedImgFromMat(img);
+        System.out.println("rotated");
+        String out = Analyse.encryptBufferedImage(Analyse.getBufferedImgFromMat(img), false);
+        System.out.println("retrning");
+        return out;
     }
 
     @Override
