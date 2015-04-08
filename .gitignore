@@ -80,3 +80,12 @@ Java/Opencv2Test/src/opencv2test/MatchResults.java
 *.xml~
 *.class
 /Java/Opencv2Test/dist/
+*.form
+
+*.class
+
+*.class
+
+*.form
+
+*.class
