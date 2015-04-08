@@ -6,7 +6,6 @@
 package opencv2test.Support;
 
 import opencv2test.Core.ClassifierImage;
-import org.opencv.core.Mat;
 
 /**
  *
@@ -14,21 +13,21 @@ import org.opencv.core.Mat;
  */
 public class MatchResult {
 
-    private final Mat image;
-    private final ClassifierImage compare;
+    private final ClassifierImage toBeChecked;
+    private final ClassifierImage toCompareWith;
     private final float error;
 
     /**
      * Creates a new instance of MatchResult.
      * This is a data-holding class which is not doing any calculations.
-     * @param error
-     * @param compare
-     * @param image 
+     * @param error 
+     * @param toCompareWith 
+     * @param toBeChecked 
      */
-    public MatchResult(float error, ClassifierImage compare, Mat image) {
+    public MatchResult(float error, ClassifierImage toCompareWith, ClassifierImage toBeChecked) {
         this.error = error;
-        this.compare = compare;
-        this.image = image;
+        this.toCompareWith = toCompareWith;
+        this.toBeChecked = toBeChecked;
     }
 
     /**
@@ -43,8 +42,8 @@ public class MatchResult {
      * Returns the image which is compared to the classifierImage
      * @return 
      */
-    public Mat getImage() {
-        return image;
+    public ClassifierImage getSourceImage() {
+        return toBeChecked;
     }
 
     /**
@@ -52,7 +51,7 @@ public class MatchResult {
      * @return 
      */
     public ClassifierImage getCompared() {
-        return compare;
+        return toCompareWith;
     }
 
 }

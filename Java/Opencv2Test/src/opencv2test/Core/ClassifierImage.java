@@ -12,8 +12,10 @@ import org.opencv.core.Mat;
  *
  * @author Siebren
  */
-public class ClassifierImage {
-
+public class ClassifierImage
+{
+    private static final boolean DEBUG_VAL = false;
+    private final int[] cutOffValues;
     private final String imageName;
     private final Mat image;
     private final float heightWidthRatio;
@@ -21,18 +23,21 @@ public class ClassifierImage {
     //private final float leftRightRatio;
     private final ArrayList<Float> blackPercentage;
     private final float noteDuration;
-    private final float MARGIN = 10.0f;
 
     /**
      * Wrapper around the original Mat class. So we can give the image a name!
      *
      * @param name
      * @param image
+     * @param noteDuration
      */
-    public ClassifierImage(String name, Mat image, float noteDuration) {
+    public ClassifierImage(String name, Mat image, float noteDuration)
+    {
         this.imageName = name;
-        this.image = Analyse.isolateImage(Analyse.deleteWhiteRows(image));
-        this.heightWidthRatio = (float) image.cols() / (float) image.rows();
+        Analyse.IsolateResult res = Analyse.isolateImage(image);//with deletewiterows ??
+        this.image = res.result;
+        this.cutOffValues = res.results;
+        this.heightWidthRatio = Analyse.getHeightWidthRatio(this.image);
         this.blackPercentage = Analyse.getBlackPercentage(this.image);
         this.topDownRatio = blackPercentage.get(0) / blackPercentage.get(1);
         this.noteDuration = noteDuration;
@@ -43,7 +48,8 @@ public class ClassifierImage {
      *
      * @return
      */
-    public String getName() {
+    public String getName()
+    {
         return imageName;
     }
 
@@ -52,7 +58,8 @@ public class ClassifierImage {
      *
      * @return
      */
-    public Mat getImage() {
+    public Mat getImage()
+    {
         return image;
     }
 
@@ -61,11 +68,13 @@ public class ClassifierImage {
      *
      * @return
      */
-    public ArrayList<Float> getBlackPercentage() {
+    public ArrayList<Float> getBlackPercentage()
+    {
         return blackPercentage;
     }
 
-    public float getTopDownRatio() {
+    public float getTopDownRatio()
+    {
         return topDownRatio;
     }
 
@@ -74,41 +83,92 @@ public class ClassifierImage {
      *
      * @return
      */
-    public float getHeightWidthRatio() {
+    public float getHeightWidthRatio()
+    {
         return heightWidthRatio;
     }
 
-    public float compare(ClassifierImage toCompare) {
+    public float compare(ClassifierImage toCompare)
+    {
+        if (DEBUG_VAL)
+        {
+            System.out.println("===Comparing to " + imageName);
+        }
         float error = 0.0f;
-        float featureCount = 5.0f;
+        float featureCount = 4.0f;
         float incrementError = 100.0f / featureCount;
         float topPercentage = Math.abs(toCompare.getBlackPercentage().get(0) - blackPercentage.get(0));
-        if (topPercentage > MARGIN) {
+        if (DEBUG_VAL)
+        {
+            System.out.println("  TOP: ToCompareValue: " + toCompare.getBlackPercentage().get(0) + " ThisValue: " + blackPercentage.get(0));
+        }
+        if (topPercentage > 5.5f)
+        {
             error += incrementError;
+            if (DEBUG_VAL)
+            {
+                System.out.println("    ERROR++: Top Difference: " + topPercentage);
+            }
         }
         float bottomPercentage = Math.abs(toCompare.getBlackPercentage().get(1) - blackPercentage.get(1));
-        if (bottomPercentage > MARGIN) {
+        if (DEBUG_VAL)
+        {
+            System.out.println("  BOTTOM: ToCompareValue: " + toCompare.getBlackPercentage().get(1) + " ThisValue: " + blackPercentage.get(1));
+        }
+        if (bottomPercentage > 3f)
+        {
             error += incrementError;
+            if (DEBUG_VAL)
+            {
+                System.out.println("    ERROR++: Bottom Difference: " + bottomPercentage);
+            }
         }
         float totalPercentage = Math.abs(toCompare.getBlackPercentage().get(2) - blackPercentage.get(2));
-        if (totalPercentage > MARGIN) {
-            error += incrementError;
+        if (DEBUG_VAL)
+        {
+            System.out.println("  TOTAL: ToCompareValue: " + toCompare.getBlackPercentage().get(2) + " ThisValue: " + blackPercentage.get(2));
         }
-        float diffArea = Math.abs(toCompare.getHeightWidthRatio() - heightWidthRatio);
-        if (diffArea > 0.005f) {
+        if (totalPercentage > 7.5f)
+        {
             error += incrementError;
+            if (DEBUG_VAL)
+            {
+                System.out.println("    ERROR++: Total Difference: " + totalPercentage);
+            }
         }
 
-        float diffTopDownRatio = Math.abs(toCompare.getTopDownRatio() - topDownRatio);
-        if (diffTopDownRatio > 0.01f) {
-            error += incrementError;
+        float hwRatio = toCompare.getHeightWidthRatio();
+        float diffArea = Math.abs(hwRatio - heightWidthRatio);
+        if (DEBUG_VAL)
+        {
+            System.out.println("  HW: ToCompareValue: " + toCompare.getHeightWidthRatio() + " ThisValue: " + heightWidthRatio);
         }
-        //System.out.println("VVD DING: " + toCompare.getBlackPercentage().get(0) + " " + toCompare.getBlackPercentage().get(1));
+        if (diffArea > 0.03f)
+        {
+            error += incrementError;
+            if (DEBUG_VAL)
+            {
+                System.out.println("    ERROR++: HW-Difference: " + diffArea);
+            }
+        }
+        if (DEBUG_VAL)
+        {
+            System.out.println("===Fin.");
+        }
+
+        //System.out.println("========================================== END");
+        //System.out.println("CURRENT: " + toCompare.getBlackPercentage().get(0) + " " + toCompare.getBlackPercentage().get(1));
         //System.out.println("ORIG: " + blackPercentage.get(0) + " " + blackPercentage.get(1));
         return error;
     }
 
-    public float getDuration() {
+    public float getDuration()
+    {
         return noteDuration;
+    }
+
+    public int[] getCutOffValues()
+    {
+        return cutOffValues;
     }
 }

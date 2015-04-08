@@ -9,11 +9,12 @@ package opencv2test.Support;
  *
  * @author Siebren
  */
-public class Note {
+public class Note
+{
 
     private final int startTick;
-    private final int duration;
-    private final int note;
+    private int duration;
+    private int note;
     private final int velocity;
 
     /**
@@ -25,42 +26,66 @@ public class Note {
      * @param startTick moment to play the note (tick)
      * @param duration length of the note (in ticks)
      */
-    public Note(int note, int velocity, int startTick, int duration) {
+    public Note(int note, int velocity, int startTick, int duration)
+    {
         this.note = note;
         this.velocity = velocity;
         this.startTick = startTick + 1;
-        this.duration = duration + 1;
+        this.duration = duration;
+    }
+
+    public void applyPoint()
+    {
+        this.duration += (int)((float)duration * 0.5f);
+    }
+
+    public void applySharp()
+    {
+        this.note += 1;
+    }
+
+    public void applyFlat()
+    {
+        this.note -= 1;
     }
 
     /**
      * Returns the startTick of this Note
+     *
      * @return startTick (int)
      */
-    public int getStartTick() {
+    public int getStartTick()
+    {
         return startTick;
     }
 
     /**
      * Returns the Note
+     *
      * @return note (int)
      */
-    public int getNote() {
+    public int getNote()
+    {
         return note;
     }
 
     /**
      * Returns the duration of this note
+     *
      * @return duration (int)
      */
-    public int getDuration() {
+    public int getDuration()
+    {
         return duration;
     }
 
     /**
      * Returns the velocity of this note
+     *
      * @return velocity (int)
      */
-    public int getVelocity() {
+    public int getVelocity()
+    {
         return velocity;
     }
 
